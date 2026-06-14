@@ -13,9 +13,8 @@ bool sistema_bloqueado_por_falha = false;
 // Variáveis para medição de litros (Requisito funcional 3: medição de consumo em cada irrigação)
 float volume_total_rega = 0.0; // Guarda o total de litros acumulados na irirgação atual
 
-//Variáveis para os cronometros de umidade e vazão
-unsigned long ultimo_tempo_umidade = 0;
-unsigned long ultimo_tempo_fluxo = 0;
+//Variável para o cronometros de umidade e vazão
+unsigned long ultimo_tempo_ciclo = 0;
 
 
 //Função de interrupção (roda a cada pulso do sensor de vazão)
@@ -51,7 +50,7 @@ void setup() {
 
 void loop() {
   if(sistema_bloqueado_por_falha){
-    Serial.println("ALERTA!: SISTEMA BLOQUEADO. Bomba protegida contra funcioamento a seco.");
+    Serial.println("ALERTA!: SISTEMA BLOQUEADO. Bomba protegida contra funcionamento a seco.");
     digitalWrite(BOMBA_PINO, LOW);
     delay(5000);
     return;
@@ -59,9 +58,9 @@ void loop() {
 
   unsigned long tempo_atual = millis();
 
-  //CRONÔMETRO 1: LEITURA E CONTROLE DE UMIDADE (Roda estritamente a cada 10s)
-  if(tempo_atual - ultimo_tempo_umidade >= 10000){
-    ultimo_tempo_umidade = tempo_atual; //Reseta o cronômetro da umidade
+  //CRONÔMETRO 1: LEITURA E CONTROLE DE UMIDADE  E VAZÃO DE ÁGUA
+  if(tempo_atual - ultimo_tempo_ciclo >= 1000 || ultimo_tempo_ciclo == 0){
+    ultimo_tempo_ciclo = tempo_atual; //Reseta o cronômetro da umidade
 
     // Aqui lê-se o sinal elétrico bruto dos dois sensores de umidade (retorna um número de 0 a 4095)
     int leitura_sensor_1 = analogRead(SENSOR_UMIDADE_1_PINO);
@@ -91,7 +90,7 @@ void loop() {
         bomba_ligada = true;
         tempo_bomba_ligou = millis();
         contador_pulsos = 0;
-        volume_total_rega = 0.0; // Zera o hidrômetro para inociar uma nova contagem nessa rega.
+        volume_total_rega = 0.0; // Zera o sensor de fluxo para inociar uma nova contagem nessa rega.
       }
     }
     //Se a média for 45% ou mais, desliga a irrigação
@@ -105,29 +104,38 @@ void loop() {
         Serial.println("===============================================================");
         Serial.print("IRRIGAÇÃO CONCLUÍDA: Total de água consumida: ");
         Serial.print(volume_total_rega, 2); //Exibe com duas casas decimais
-        Serial.print(" Litros.");
+        Serial.println(" Litros.");
         Serial.println("===============================================================");
 
-        //CHAMADA 2 DA FUNÇÃO: Envia o relatório final assim que a rega acaba
+        //CHAMADA DA FUNÇÃO: Envia o relatório final assim que a rega acaba
         transmitirDadosSoftware(umidade_media, bomba_ligada, volume_total_rega);
 
       }
     }
 
-    //CHAMADA 1 DA FUNÇÃO: Fora do else if, mas no fim do bloco de 10s. Envia a atualização periódica
-    transmitirDadosSoftware(umidade_media, bomba_ligada, volume_total_rega);
-
     Serial.println("\n------------------------------------------------------------------");
-  }
     
-  //CRONÔMETRO 2: MEDIÇÃO DE LITROS E PROTEÇÃO DRY-RUN (roda a cada 1 segundo SE a bomba estiver ligada) E CÁLCULOS DE LITROS
-  if (bomba_ligada && (tempo_atual - ultimo_tempo_fluxo >= 1000)){
-    ultimo_tempo_fluxo = tempo_atual; //Reseta o cronômetro do fluxo
+  //MEDIÇÃO DE LITROS E PROTEÇÃO DRY-RUN (roda a cada 1 segundo SE a bomba estiver ligada) E CÁLCULOS DE LITROS
+  if (bomba_ligada){
 
+    // [MUNDO REAL]: Código original para o sensor de vazão físico YF-S201
+    // (Deixado comentado apenas para não travar o simulador Wokwi)
     //Converte os pulsos acumulados no último segundo para litros (Fórmula do YF-S201)
     // 450 pulsos equivalem a 1 litro
+    //float litros_neste_segundo = (float)contador_pulsos / 450.0;
+    //volume_total_rega += litros_neste_segundo;//Soma ao volume total acumulado desta rega
+
+
+    // [SIMULADOR WOKWI]: Emulação analógica para teste no potenciômetro azul (sensor de vazão)
+    // (Quando for para o mundo real, desativaremos essas linhas e ativaremos as de cima)
+    int leitura_vazao_simulada = analogRead(SENSOR_VAZAO_PINO);
+    if(leitura_vazao_simulada > 500) {
+      contador_pulsos = map(leitura_vazao_simulada, 500, 4095, 50, 450); 
+    }
+
     float litros_neste_segundo = (float)contador_pulsos / 450.0;
-    volume_total_rega += litros_neste_segundo;//Soma ao volume total acumulado desta rega
+    volume_total_rega += litros_neste_segundo;
+
 
     //Proteção Dry-Run (checa se após 5 segundos de bomba ligada o volume de água acumulado é zero)
     if (tempo_atual - tempo_bomba_ligou >= 5000){
@@ -143,11 +151,18 @@ void loop() {
     }
 
     //Exibe na tela o consumo parcial acumulado a cada ciclo
-    Serial.print("Consumo de água desta rega: ");
-    Serial.print(volume_total_rega, 2);
-    Serial.println(" Litros.");
+    //Comentei essas linhas pois estava printando os litros a cada segundo e não era essa a ideia
+    //Serial.print("Consumo de água desta rega: ");
+    //Serial.print(volume_total_rega, 2);
+    //Serial.println(" Litros.");
 
     contador_pulsos = 0; //Zera o contador de pulsos para medir o próximo segundo isoladamente
+  }
+
+  // Envia a atualização periódica a cada segundo
+    transmitirDadosSoftware(umidade_media, bomba_ligada, volume_total_rega);
+
+    Serial.println("\n------------------------------------------------------------------");
   }
 }
 
