@@ -1,6 +1,6 @@
-#Sirion - Sistema de Irrigação Inteligente
+# Sirion - Sistema de Irrigação Inteligente
 
-O **Sirion** é um ecossistema de automação e manejo hídrico residencial, projetado para atender às necessidades das plantas de acordo com o solo e clima da região onde for instalado. 
+O **Sirion** é um ecossistema de automação e manejo hídrico residencial, projetado para atender às necessidades de hortas de acordo com o solo e clima da região onde for instalado. 
 
 Este repositório utiliza a arquitetura de **Monorepo**, concentrando todas as camadas do software em um único ambiente de desenvolvimento.
 
