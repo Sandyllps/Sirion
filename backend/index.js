@@ -13,7 +13,14 @@ const port = process.env.PORT
 
 //INICIALIZAÇÃO DO SERVIDOR
 //Aquio servidor começa efetivamente a "ouvir" as chamadas que a página faz na porta definida"
-app.listen(port, function(){
+const server = app.listen(port, function(){
     console.log("Servidor Sirion rodando com sucesso!");
     console.log("Escutando em: http://localhost:"+ port);
+    
+})
+
+// Escutando eventos de erro na instância do servidor
+server.on('error',
+    /*Essa função que criei será executada quando acotecer um erro:*/(erro) =>{
+    console.error("Erro: "+ erro)
 })
