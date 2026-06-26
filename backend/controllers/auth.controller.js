@@ -1,5 +1,5 @@
-import { response } from "express"
-import { pool } from "../bd.js"
+import { response } from "express";
+import { mysqlPool } from "../database/mysql.js";
 
 
 
@@ -11,8 +11,8 @@ async function login(req, res){
         const email = req.body.email //a requisição de login precisa receber no body email e senha.
         const senha = req.body.senha
 
-        //pool.execute() envia a querySQL para o banco.
-        const resposta = await pool.execute('SELECT Id, nome, email, senha_hash FROM usuarios WHERE email = ? and senha_hash = ?', [email, senha_hash]);
+        //mysqlPool.execute() envia a querySQL para o banco.
+        const resposta = await mysqlPool.execute('SELECT Id, nome, email, senha_hash FROM usuarios WHERE email = ? and senha_hash = ?', [email, senha]);
         const linhas = resposta[0]
 
         if(!linhas[0]){ //Se na posição [0] do array não tiver resposta com esse usuario e senha, retorna "usuario inválido".
@@ -29,9 +29,12 @@ async function login(req, res){
             "email": linhas[0].email
         })
     }
-    catch(error){
+    catch(erro_login){
+        console.error("O erro é esse aqui: ", erro_login)
         return res.status(500).json({
             response:"Erro interno :("
         })
     }
 }
+
+export {login}
