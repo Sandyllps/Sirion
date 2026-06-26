@@ -32,6 +32,8 @@ const zoneSchema = new mongoose.Schema({
       pino: { type: String, required: true }
     }]
   }
+}, { 
+  collection: 'zonas_irrigacao'
 });
 
 export default mongoose.model('zonas_irrigacao', zoneSchema);
