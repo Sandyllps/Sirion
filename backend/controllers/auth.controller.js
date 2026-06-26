@@ -1,5 +1,5 @@
 import { response } from "express";
-import { mysqlPool } from "../database/mysql.js";
+import { mysqlPool } from "../models/mysql.js";
 
 
 
