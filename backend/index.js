@@ -2,6 +2,7 @@ import express from "express"; //express é um framework que simplifica o tratam
 import 'dotenv/config'; //esse import carrega as vaariáveis do arquivo .env (nesse arquivo estão os dados do banco de dados).
 import { authRouter } from "./routes/auth.route.js";
 import { conectarMongoDB } from "./database/mongodb.js";
+import { zoneRouter } from "./routes/zone.route.js";
 
 
 
@@ -10,6 +11,7 @@ const app = express();
 
 app.use(express.json()); //indicando pro meu servidor que vou trabalhar com JSON
 app.use("/auth", authRouter);
+app.use("/zone", zoneRouter);
 
 //Busca a porta  definida no arquivo .env
 const port = process.env.PORT
