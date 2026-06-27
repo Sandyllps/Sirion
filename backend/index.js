@@ -3,6 +3,7 @@ import 'dotenv/config'; //esse import carrega as vaariáveis do arquivo .env (ne
 import { authRouter } from "./routes/auth.route.js";
 import { conectarMongoDB } from "./models/mongodb.js";
 import { zoneRouter } from "./routes/zone.route.js";
+import { iniciarBrokerMQTT } from "./broker_mqtt.js";
 
 
 
@@ -10,6 +11,7 @@ const app = express();
 
 
 app.use(express.json()); //indicando pro meu servidor que vou trabalhar com JSON
+app.use(express.static("public"))
 app.use("/auth", authRouter);
 app.use("/zone", zoneRouter);
 
@@ -26,10 +28,10 @@ conectarMongoDB();
 const server = app.listen(port, function(){
     console.log("Servidor Sirion rodando com sucesso!");
     console.log("Escutando em: http://localhost:"+ port);
-    
+    iniciarBrokerMQTT();
 })
 
-// Escutando eventos de erro na instância do servidor
+//Escutando eventos de erro na instância do servidor
 server.on('error',
     /*Essa função que criei será executada quando acotecer um erro:*/(erro) =>{
     console.error("Erro: "+ erro)
