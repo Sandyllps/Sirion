@@ -1,10 +1,12 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
+#include <cstring> 
 
 
 //configurações da rede wifi
 const char* ssid = "";
 const char* password = "";
+int ligado = 0;
 
 
 //Configurações do broker MQTT (o servidor node.js)
@@ -52,6 +54,15 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.println(mensagem);
 
   //aqui colocarei depois a lógica para acender LED, ligar relé etc
+  if(strcmp(topic, "sirion/jardim/switch") == 0){
+    if(ligado == 0){
+      digitalWrite(2, HIGH);
+      ligado = 1;
+    }else{
+      digitalWrite(2,LOW);
+      ligado = 0;
+    }
+  }
 }
 
 
@@ -74,6 +85,8 @@ void reconnect() {
       
       //assina/se inscreve em um tópico para ouvir comandos
       client.subscribe("sirion/comandos");
+      client.subscribe("sirion/jardim/switch");
+
     } else {
       Serial.print("Falhou, rc=");
       Serial.print(client.state());
@@ -87,6 +100,7 @@ void reconnect() {
 void setup() {
   Serial.begin(115200);
   setup_wifi();
+  pinMode(2, OUTPUT);
   
   //informa o endereço do broker e a porta TCP
   client.setServer(mqtt_server, mqtt_port);
