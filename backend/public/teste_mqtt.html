@@ -23,6 +23,8 @@
     
     <input type="text" id="inputMensagem" placeholder="Ex: Umidade em 45%">
     <button onclick="enviarMensagem()">Publicar</button>
+    <br><br>
+    <button id="interruptor" onclick="ligarDesligar()">Ligar LED</button>
   </div>
 
   <script>
@@ -67,6 +69,12 @@
     function adicionarLog(texto) {
       divMensagens.innerHTML += `<div>${texto}</div>`;
       divMensagens.scrollTop = divMensagens.scrollHeight; //reola para o final
+    }
+
+
+    function ligarDesligar(){
+      cliente.publish("sirion/jardim/switch", "")
+      
     }
   </script>
 </body>

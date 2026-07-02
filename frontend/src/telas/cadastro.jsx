@@ -1,4 +1,5 @@
 import "./cadastro.css";
+import Carrossel from "../componentes/carrossel/Carrossel";
 
 
 function Cadastro() {
@@ -7,7 +8,7 @@ function Cadastro() {
             
             <div className="container-cadastro">
                 <div className="imagem-lateral">
-                    <img src="/imagens/login/hortinha.jpg" alt="Hortinha" />
+                    <Carrossel />
                 </div>
 
                 <div className="painel-cadastro">

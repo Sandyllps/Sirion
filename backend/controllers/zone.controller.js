@@ -41,24 +41,30 @@ async function createZone(req, res) {
 
 
 //Função de listar zonas de irigação
-async function getZone(req, res){
+async function getZone(req, res){ //esse getZone vai retornar tanto todas as zonas do usuario quanto uma zona específica dependendo do parâmetro query enviado na requisição. 
     try{
         //além de mandar parametros no body, também podemos mandar paarâmetros query, onde, você manda parâmetros na url, no final da rota
         //Nesse caso, aqui mandaremos id_usuario como parametro na url
         //ex.: http://localhost:8080/zone?id_usuario=1
-        const {id_usuario} = req.query;
+        const {id_usuario, chave_esp} = req.query; //Se eu quiser retornar todaas as zonas do usuário, mando o id_usuario na url, se eu quiser listar uma zona específica, mando a chave_esp na url
 
-        //se não foi mandado o id, bloqueia a requisição
-        if(!id_usuario) {
-            return res.status(400).json({
-                erro: 'Acesso negado. O id do usuário é obrigatório para exibir as zonas.'
-            });
+        if(chave_esp && chave_esp != ""){ //s eesse if for verdadeiro, vamos buscar pela chave esp
+          console.log("Usando chave esp: ", chave_esp);
+          const zones = await Zone.find({"esp32.chave_esp": chave_esp});
+          return res.status(200).json(zones);
         }
 
-        //essa busca estrita vai no banco e traz apenas os documentos onde o id do usuario bate com o enviado.
-        const zones = await Zone.find({id_usuario: id_usuario});
+        if(id_usuario && id_usuario != "") {//se esse if for verdadeiro, vamos buscar pelo id_usuario
+          console.log("Usando id_usuario: ", id_usuario);
+          const zones = await Zone.find({id_usuario: id_usuario});
+          return res.status(200).json(zones);
+        }
 
-        return res.status(200).json(zones);
+        //se não foi mandado o id, bloqueia a requisição
+        return res.status(400).json({
+          erro: 'Acesso negado. O id_usuario ou chave_esp é obrigatório para exibir as zonas.'
+        });
+
     }   catch(erro){
         console.error('Erro ao buscar zonas: ', erro);
         return res.status(500).json({erro: 'Falha ao buscar as zonas de irrigação.'});
@@ -117,6 +123,8 @@ async function deleteZone(req, res){
     return res.status(500).json({ erro: 'Falha ao excluir a zona de irrigação.' });
   }
 }
+
+
 
 export {createZone};
 export {getZone};
