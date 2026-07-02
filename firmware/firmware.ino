@@ -206,7 +206,17 @@ void fazerRequisicaoGET() {
       }
 
 
+      //TODO: pesquisar como deixar os dados do wifi em outro arquivo, ip do servidor, chave do esp
+      //em outro arquivo e deixar isso no gitignore para não subir pro github.
       
+      //TODO: como fazer a conversão dos pinos que estão em string (ex: "G2", "G3") para seu valor correspondente em int, pois no código precisamos do valor inteiro
+
+      //TODO: depois de fazer a conversão dos pinos, inicializar:
+      //o pino de vazão como entrada (input)
+      //o pino da bomba como saída (output)
+      //os pinos de umidade como entrada (input)
+
+      //TODO: em outra função, fazer o cálculo de média da umidade e mandar a instrução de ligar e desligar a bomba baseado nessa média e os valores limite min e max de umidade 
 
     } else {
       Serial.print("Erro na requisição GET. Código do erro: ");
