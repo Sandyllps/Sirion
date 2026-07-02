@@ -1,18 +1,23 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
-#include <cstring> 
+#include <cstring>
+#include <HTTPClient.h>
+#include <ArduinoJson.h> 
 
 
-//configurações da rede wifi
+//configurações manuais do usuário
 const char* ssid = "";
 const char* password = "";
-int ligado = 0;
-
-
+const char* chave_esp = "8677r5ygry6f6yy56";
 //Configurações do broker MQTT (o servidor node.js)
 //aqui coloco o endereço IP IPv4 da máquina onde o servidor node está rodando.
 const char* mqtt_server = "192.168.0.101"; 
 const int mqtt_port = 1883; // A porta TCP que configuramos no backend
+
+
+int ligado = 0;
+
+
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -87,6 +92,9 @@ void reconnect() {
       client.subscribe("sirion/comandos");
       client.subscribe("sirion/jardim/switch");
 
+      //aqui vou chamara a função para pedir os dados do esp
+      fazerRequisicaoGET();
+
     } else {
       Serial.print("Falhou, rc=");
       Serial.print(client.state());
@@ -135,5 +143,68 @@ void loop() {
     Serial.println(payload);
     
     client.publish("sirion/jardim/umidade", payload.c_str());
+  }
+}
+
+
+void fazerRequisicaoGET() {
+  //verifica se o Wi-Fi está conectado antes de tentar
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+
+    //colocamos aqui o ip do servidor e a rota da API
+    String serverPath = "http://192.168.0.101:8080/zone?chave_esp=ufg8r78r387trugc8r7gcyeucye";
+    
+    //inicaindo a conexão
+    http.begin(serverPath);
+    
+    //faz a requisição GET e salva o código HTTP de retorno (ex: 200 = OK)
+    int httpResponseCode = http.GET(); 
+
+    if (httpResponseCode > 0) {
+      Serial.print("Reposta recebida. Código HTTP: ");
+      Serial.println(httpResponseCode);
+      
+      //pega o corpo da resposta da API/o texto do JSON
+      String payload = http.getString();
+      
+      //aqui prepara-se a memória pra processar o JSON 
+      //O valor 1024 bytes geralmente é suficiente para respostas normais
+      JsonDocument doc;
+      
+      //converte o texto cru para o objeto JsonDocument
+      DeserializationError error = deserializeJson(doc, payload);
+
+      if (error) {
+        Serial.print("Falha ao analisar o JSON: ");
+        Serial.println(error.c_str());
+        return;
+      }
+
+      //acessando os dados
+      //a resposta é uma array contendo objetos 
+      //pegando o objeto no índice 0 da array
+      int id_usuario = doc[0]["id_usuario"]; 
+      const char* nome = doc[0]["nome"];
+      int min_umidade = doc[0]["min_umidade"];
+      int max_umidade = doc[0]["max_umidade"];
+
+      //printando os atributos extraídos
+      Serial.println("Dados Extraídos do Objeto");
+      Serial.print("ID do usuário: "); Serial.println(id_usuario);
+      Serial.print("nome: "); Serial.println(nome);
+      Serial.print("Umidade mínima: "); Serial.println(min_umidade);
+      Serial.print("Umidade máxima: "); Serial.println(max_umidade);
+
+    } else {
+      Serial.print("Erro na requisição GET. Código do erro: ");
+      Serial.println(httpResponseCode);
+    }
+    
+    //Encerra a conexão pra liberar os recursos do ESP32
+    http.end();
+    
+  } else {
+    Serial.println("Wi-Fi desconectado. Impossível fazer o GET.");
   }
 }
