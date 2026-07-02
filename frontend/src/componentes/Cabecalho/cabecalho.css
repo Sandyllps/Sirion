@@ -1,0 +1,41 @@
+.cabecalho{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    width:100%;
+    height:70px;
+    padding:0 25px;
+    border-bottom:1px solid #d9d9d9;
+    background:white;
+    box-sizing:border-box;
+}
+
+.botao-menu{
+    width:45px;
+    height:45px;
+    border:none;
+    background:none;
+    font-size:28px;
+}
+
+.titulo-sistema{
+    display:flex;
+    flex-direction:column;
+    flex:1;
+    margin-left:20px;
+}
+
+.titulo-sistema h1{
+    margin:0;
+    font-size:26px;
+}
+
+.titulo-sistema span{
+    font-size:13px;
+    color:#666;
+}
+
+.status-sistema{
+    font-size:14px;
+    color:green;
+}

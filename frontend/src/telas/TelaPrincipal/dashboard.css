@@ -1,0 +1,57 @@
+.cartao-dashboard{
+
+    background:#ffffff;
+
+    border:1px solid #dcdcdc;
+
+    border-radius:10px;
+
+    padding:20px;
+
+    min-width:260px;
+
+    min-height:170px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:space-between;
+
+    box-shadow:0 2px 5px rgba(0,0,0,.05);
+
+}
+
+.cartao-dashboard h1{
+
+    font-size:48px;
+
+    margin:0;
+
+}
+
+.cartao-dashboard h3{
+
+    margin:0;
+
+}
+
+.cartao-dashboard p{
+
+    margin:0;
+
+}
+
+.botao-modo{
+
+    margin-top:15px;
+
+    padding:10px;
+
+    border:none;
+
+    border-radius:6px;
+
+    cursor:pointer;
+
+}

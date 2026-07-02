@@ -1,7 +1,7 @@
-import Cadastro from "./telas/cadastro";
+import Dashboard from "./telas/TelaPrincipal/Dashboard";
 
 function App() {
-  return <Cadastro />;
+  return <Dashboard />;
 }
 
 export default App;
