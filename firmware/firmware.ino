@@ -18,7 +18,6 @@ const int mqtt_port = 1883; // A porta TCP que configuramos no backend
 int ligado = 0;
 
 
-
 WiFiClient espClient;
 PubSubClient client(espClient);
 
@@ -188,6 +187,9 @@ void fazerRequisicaoGET() {
       const char* nome = doc[0]["nome"];
       int min_umidade = doc[0]["min_umidade"];
       int max_umidade = doc[0]["max_umidade"];
+      const char* pino_sensor_vazao = doc[0]["esp32"]["pino_sensor_vazao"];
+      const char* pino_bomba = doc[0]["esp32"]["pino_bomba"];
+      JsonArray sensores_umidade = doc[0]["esp32"]["sensores_umidade"];
 
       //printando os atributos extraídos
       Serial.println("Dados Extraídos do Objeto");
@@ -195,6 +197,16 @@ void fazerRequisicaoGET() {
       Serial.print("nome: "); Serial.println(nome);
       Serial.print("Umidade mínima: "); Serial.println(min_umidade);
       Serial.print("Umidade máxima: "); Serial.println(max_umidade);
+      Serial.print("Pino do sensor de vazão: "); Serial.println(pino_sensor_vazao);
+      Serial.print("Pino da bomba: "); Serial.println(pino_bomba);
+      Serial.println("Pinos dos sensores de umidade: ");
+      for(int i=0; i<sensores_umidade.size(); i++){
+        const char* pino = sensores_umidade[i]["pino"];
+        Serial.println(pino);
+      }
+
+
+      
 
     } else {
       Serial.print("Erro na requisição GET. Código do erro: ");
