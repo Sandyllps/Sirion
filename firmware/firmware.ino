@@ -2,16 +2,10 @@
 #include <PubSubClient.h>
 #include <cstring>
 #include <HTTPClient.h>
-#include <ArduinoJson.h> 
+#include <ArduinoJson.h>
+#include "credentials.h"
 
 
-//configurações manuais do usuário
-const char* ssid = "";
-const char* password = "";
-const char* chave_esp = "8677r5ygry6f6yy56";
-//Configurações do broker MQTT (o servidor node.js)
-//aqui coloco o endereço IP IPv4 da máquina onde o servidor node está rodando.
-const char* mqtt_server = "192.168.0.101"; 
 const int mqtt_port = 1883; // A porta TCP que configuramos no backend
 
 
@@ -47,9 +41,9 @@ void setup_wifi() {
 
 //função de callback (quando recebe mensagem)
 void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Mensagem recebida no tópico [");
+  Serial.print("Mensagem recebida no tópico");
   Serial.print(topic);
-  Serial.print("]: ");
+  Serial.print(": ");
   
   String mensagem = "";
   for (int i = 0; i < length; i++) {
@@ -151,8 +145,11 @@ void fazerRequisicaoGET() {
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
 
-    //colocamos aqui o ip do servidor e a rota da API
-    String serverPath = "http://192.168.0.101:8080/zone?chave_esp=ufg8r78r387trugc8r7gcyeucye";
+    //montando a url com as variáveis do credentials.h
+    String serverPath = "http://";
+    serverPath += mqtt_server;
+    serverPath += ":8080/zone?chave_esp=";
+    serverPath += chave_esp;
     
     //inicaindo a conexão
     http.begin(serverPath);
@@ -166,6 +163,8 @@ void fazerRequisicaoGET() {
       
       //pega o corpo da resposta da API/o texto do JSON
       String payload = http.getString();
+
+      Serial.println("Payload recebido da API: " + payload);
       
       //aqui prepara-se a memória pra processar o JSON 
       //O valor 1024 bytes geralmente é suficiente para respostas normais
@@ -177,6 +176,12 @@ void fazerRequisicaoGET() {
       if (error) {
         Serial.print("Falha ao analisar o JSON: ");
         Serial.println(error.c_str());
+        return;
+      }
+
+      //aqui verifica se a lista veio vazia
+      if (doc.size() == 0) {
+        Serial.println("Aviso: O servidor não retornou nenhum dado (Chave incorreta ou banco vazio).");
         return;
       }
 
