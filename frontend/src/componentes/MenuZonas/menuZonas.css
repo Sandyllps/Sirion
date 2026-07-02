@@ -1,0 +1,29 @@
+.menu-zonas{
+    width:260px;
+    height:100%;
+    border-right:1px solid #d9d9d9;
+    padding:20px;
+    box-sizing:border-box;
+}
+
+.menu-zonas h2{
+    margin-top:0;
+}
+
+.menu-zonas ul{
+    list-style:none;
+    padding:0;
+}
+
+.menu-zonas li{
+    padding:12px;
+    margin-bottom:10px;
+    background:#f4f4f4;
+    border-radius:6px;
+}
+
+.botao-nova-zona{
+    width:100%;
+    height:40px;
+    margin-top:15px;
+}
