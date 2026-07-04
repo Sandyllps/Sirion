@@ -78,6 +78,11 @@ void callback(char* topic, byte* payload, unsigned int length) {
       Serial.println(pinoBombaInt);
     }
   }
+
+  if(strcmp(topic, "sirion/jardim/recarregar") == 0){
+    Serial.println("Recebido comando para recarregar configuracoes do ESP32...");
+    fazerRequisicaoGET();
+  }
 }
 
 
@@ -104,6 +109,7 @@ void reconnect() {
       //assina/se inscreve em um tópico para ouvir comandos
       client.subscribe("sirion/comandos");
       client.subscribe("sirion/jardim/switch");
+      client.subscribe("sirion/jardim/recarregar");
 
       //aqui vou chamara a função para pedir os dados do esp
       fazerRequisicaoGET();
@@ -376,3 +382,4 @@ void fazerRequisicaoGET() {
     Serial.println("Wi-Fi desconectado. Impossível fazer o GET.");
   }
 }
+
