@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./dashboard.css";
+import "./../../telas/TelaPrincipal/dashboard.css";
 
 function CardModoIrrigacao() {
 

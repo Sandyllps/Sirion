@@ -1,0 +1,51 @@
+.fundo-modal{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,0.35);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+.modal-editar-zona{
+
+    width:450px;
+
+    background:white;
+
+    border-radius:10px;
+
+    padding:25px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+.modal-editar-zona input{
+
+    padding:8px;
+
+}
+
+.botoes-modal{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:10px;
+
+    margin-top:15px;
+
+}

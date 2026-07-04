@@ -1,4 +1,4 @@
-import "./dashboard.css";
+import "./../../telas/TelaPrincipal/dashboard.css";
 
 function CardVolume({ volume }) {
 
