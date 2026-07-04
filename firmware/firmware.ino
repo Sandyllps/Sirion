@@ -1,9 +1,9 @@
-#include <WiFi.h>
-#include <PubSubClient.h>
-#include <cstring>
-#include <HTTPClient.h>
-#include <ArduinoJson.h>
-#include "credentials.h"
+#include <WiFi.h>;
+#include <PubSubClient.h>;
+#include <cstring>;
+#include <HTTPClient.h>;
+#include <ArduinoJson.h>;
+#include "credentials.h";
 
 
 const int mqtt_port = 1883; // A porta TCP que configuramos no backend
@@ -14,6 +14,14 @@ int ligado = 0;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
+
+//variáveis globais para guardar os pinos já convertidos
+int pinoSensorVazaoInt = -1;
+int pinoBombaInt = -1;
+
+const int MAX_SENSORES_UMIDADE = 10; // ajuste se quiser suportar mais sensores
+int pinosSensoresUmidade[MAX_SENSORES_UMIDADE];
+int quantidadeSensoresUmidade = 0;
 
 
 //função para conectar ao wifi
@@ -30,7 +38,7 @@ void setup_wifi() {
     Serial.print(".");
     Serial.print(" Status: ");
     Serial.println(WiFi.status());
-}
+  }
 
   Serial.println("");
   Serial.println("WiFi conectado!");
@@ -41,7 +49,7 @@ void setup_wifi() {
 
 //função de callback (quando recebe mensagem)
 void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Mensagem recebida no tópico");
+  Serial.print("Mensagem recebida no tópico ");
   Serial.print(topic);
   Serial.print(": ");
   
@@ -53,15 +61,27 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   //aqui colocarei depois a lógica para acender LED, ligar relé etc
   if(strcmp(topic, "sirion/jardim/switch") == 0){
+    if (!pinoPodeSerOutput(pinoBombaInt)) {
+      Serial.println("Erro: pino da bomba ainda não foi configurado corretamente.");
+      return;
+    }
+
     if(ligado == 0){
-      digitalWrite(2, HIGH);
+      digitalWrite(pinoBombaInt, HIGH);
       ligado = 1;
+      Serial.print("Bomba/Led ligada no pino ");
+      Serial.println(pinoBombaInt);
     }else{
-      digitalWrite(2,LOW);
+      digitalWrite(pinoBombaInt,LOW);
       ligado = 0;
+      Serial.print("Bomba/Led desligada no pino ");
+      Serial.println(pinoBombaInt);
     }
   }
 }
+
+
+//TODO: em outra função, fazer o cálculo de média da umidade e mandar a instrução de ligar e desligar a bomba baseado nessa média e os valores limite min e max de umidade
 
 
 //função pra reconectar ao Broker MQTT
@@ -98,6 +118,73 @@ void reconnect() {
 }
 
 
+//função de conversão para os nomes exatos da placa esp
+int converterPinoParaInt(String pinoTexto) {
+  pinoTexto.trim();
+  pinoTexto.toUpperCase();
+
+  //lado esquerdo da placa
+  if (pinoTexto == "SP")  return 36; // GPIO36
+  if (pinoTexto == "SN")  return 39; // GPIO39
+  if (pinoTexto == "G34") return 34;
+  if (pinoTexto == "G35") return 35;
+  if (pinoTexto == "G32") return 32;
+  if (pinoTexto == "G33") return 33;
+  if (pinoTexto == "G25") return 25;
+  if (pinoTexto == "G26") return 26;
+  if (pinoTexto == "G27") return 27;
+  if (pinoTexto == "G14") return 14;
+  if (pinoTexto == "G12") return 12;
+  if (pinoTexto == "G13") return 13;
+  if (pinoTexto == "SD2") return 9;
+  if (pinoTexto == "SD3") return 10;
+  if (pinoTexto == "CMD") return 11;
+
+  //lado direito da placa
+  if (pinoTexto == "G23") return 23;
+  if (pinoTexto == "G22") return 22;
+  if (pinoTexto == "TXD") return 1;
+  if (pinoTexto == "RXD") return 3;
+  if (pinoTexto == "G21") return 21;
+  if (pinoTexto == "G19") return 19;
+  if (pinoTexto == "G18") return 18;
+  if (pinoTexto == "G5")  return 5;
+  if (pinoTexto == "G17") return 17;
+  if (pinoTexto == "G16") return 16;
+  if (pinoTexto == "G4")  return 4;
+  if (pinoTexto == "G0")  return 0;
+  if (pinoTexto == "G2")  return 2;
+  if (pinoTexto == "G15") return 15;
+  if (pinoTexto == "SD1") return 8;
+  if (pinoTexto == "SD0") return 7;
+  if (pinoTexto == "CLK") return 6;
+
+  //esses pinos não são utilizáveis
+  if (pinoTexto == "3V3") return -10;
+  if (pinoTexto == "EN")  return -11;
+  if (pinoTexto == "GND") return -12;
+  if (pinoTexto == "5V")  return -13;
+
+  Serial.println("⚠️ AVISO: Pino não reconhecido na tradução -> " + pinoTexto);
+  return -1;
+}
+
+//função auxiliar pra dizer se o pino pode ser usado como saída
+bool pinoPodeSerOutput(int pino) {
+  // pinos somente de entrada
+  if (pino == 34 || pino == 35 || pino == 36 || pino == 39) return false;
+
+  // pinos da flash/SD - melhor não usar
+  if (pino == 6 || pino == 7 || pino == 8 || pino == 9 || pino == 10 || pino == 11) return false;
+
+  // pinos inválidos retornados pela função
+  if (pino < 0) return false;
+
+  return true;
+}
+
+
+
 void setup() {
   Serial.begin(115200);
   setup_wifi();
@@ -109,6 +196,7 @@ void setup() {
   //informa qual função será chamada quando chegar uma mensagem
   client.setCallback(callback);
 }
+
 
 
 //loop principal
@@ -176,12 +264,14 @@ void fazerRequisicaoGET() {
       if (error) {
         Serial.print("Falha ao analisar o JSON: ");
         Serial.println(error.c_str());
+        http.end();
         return;
       }
 
       //aqui verifica se a lista veio vazia
       if (doc.size() == 0) {
         Serial.println("Aviso: O servidor não retornou nenhum dado (Chave incorreta ou banco vazio).");
+        http.end();
         return;
       }
 
@@ -211,18 +301,69 @@ void fazerRequisicaoGET() {
       }
 
 
-      //TODO: pesquisar como deixar os dados do wifi em outro arquivo, ip do servidor, chave do esp
-      //em outro arquivo e deixar isso no gitignore para não subir pro github.
-      
-      //TODO: como fazer a conversão dos pinos que estão em string (ex: "G2", "G3") para seu valor correspondente em int, pois no código precisamos do valor inteiro
+      pinoSensorVazaoInt = converterPinoParaInt(String(pino_sensor_vazao));
 
-      //TODO: depois de fazer a conversão dos pinos, inicializar:
+      if (pinoSensorVazaoInt < 0) {
+        Serial.println("Erro: pino do sensor de vazão inválido ou não utilizável.");
+      } else {
+        Serial.print("Pino do sensor de vazão convertido para inteiro: ");
+        Serial.println(pinoSensorVazaoInt);
+      }
+
+      pinoBombaInt = converterPinoParaInt(String(pino_bomba));
+
+      if (pinoBombaInt < 0) {
+        Serial.println("Erro: pino da bomba inválido ou não utilizável.");
+      } else {
+        Serial.print("Pino da bomba convertido para inteiro: ");
+        Serial.println(pinoBombaInt);
+      }
+
+      quantidadeSensoresUmidade = 0;
+
+      for (int i = 0; i < sensores_umidade.size() && i < MAX_SENSORES_UMIDADE; i++) {
+        const char* pinoTexto = sensores_umidade[i]["pino"];
+        int pinoConvertido = converterPinoParaInt(String(pinoTexto));
+
+        if (pinoConvertido < 0) {
+          Serial.print("Erro: pino de sensor de umidade inválido -> ");
+          Serial.println(pinoTexto);
+        } else {
+          pinosSensoresUmidade[quantidadeSensoresUmidade] = pinoConvertido;
+          quantidadeSensoresUmidade++;
+
+          Serial.print("Pino de sensor de umidade convertido: ");
+          Serial.print(pinoTexto);
+          Serial.print(" -> ");
+          Serial.println(pinoConvertido);
+        }
+      }
+
+      //nicializado:
       //o pino de vazão como entrada (input)
       //o pino da bomba como saída (output)
       //os pinos de umidade como entrada (input)
+      if (pinoSensorVazaoInt >= 0) {
+        pinMode(pinoSensorVazaoInt, INPUT);
+        Serial.println("Pino do sensor de vazão inicializado como INPUT.");
+      }
 
-      //TODO: em outra função, fazer o cálculo de média da umidade e mandar a instrução de ligar e desligar a bomba baseado nessa média e os valores limite min e max de umidade 
+      if (pinoPodeSerOutput(pinoBombaInt)) {
+        pinMode(pinoBombaInt, OUTPUT);
+        digitalWrite(pinoBombaInt, LOW);
+        Serial.println("Pino da bomba inicializado como OUTPUT.");
+      } else {
+        Serial.println("Erro: o pino da bomba não pode ser usado como OUTPUT.");
+      }
 
+      for (int i = 0; i < quantidadeSensoresUmidade; i++) {
+        pinMode(pinosSensoresUmidade[i], INPUT);
+      }
+      Serial.println("Pinos dos sensores de umidade inicializados como INPUT.");
+
+
+
+      //faznedo o cálculo de média da umidade e mandando a instrução de ligar e desligar a bomba baseado nessa média e os valores limite min e max de umidade 
     } else {
       Serial.print("Erro na requisição GET. Código do erro: ");
       Serial.println(httpResponseCode);
