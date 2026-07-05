@@ -3,6 +3,7 @@ import 'dotenv/config'; //esse import carrega as vaariáveis do arquivo .env (ne
 import { authRouter } from "./routes/auth.route.js";
 import { conectarMongoDB } from "./models/mongodb.js";
 import { zoneRouter } from "./routes/zone.route.js";
+import { dashboardRouter } from "./routes/dashboard.route.js";
 import { iniciarBrokerMQTT } from "./broker_mqtt.js";
 
 
@@ -17,7 +18,6 @@ app.use("/zone", zoneRouter);
 
 //Busca a porta  definida no arquivo .env
 const port = process.env.PORT
-
 
 //Dispara a conexão do mongoDB
 conectarMongoDB();

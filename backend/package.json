@@ -1,7 +1,6 @@
 {
   "name": "sirion_api",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -11,10 +10,17 @@
   "license": "ISC",
   "dependencies": {
     "aedes": "^1.1.0",
+    "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "mongoose": "^9.7.2",
     "mysql2": "^3.22.5",
     "websocket-stream": "^5.3.0"
+  },
+  "keywords": [],
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
+
