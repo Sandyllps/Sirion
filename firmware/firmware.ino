@@ -85,7 +85,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
 }
 
-
+//TODO: deixar de enviar pro servidor valores de umidade aleatórios. No lugar disso, enviar o valor do pino de umidade (o valor que vem da API)
 //TODO: em outra função, fazer o cálculo de média da umidade e mandar a instrução de ligar e desligar a bomba baseado nessa média e os valores limite min e max de umidade
 
 
