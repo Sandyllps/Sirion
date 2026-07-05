@@ -41,3 +41,35 @@
     background:white;
 
 }
+
+.cabecalho-dashboard{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.cabecalho-dashboard h2{
+
+    margin:0;
+
+}
+
+.cabecalho-dashboard h3{
+
+    margin-top:5px;
+
+    font-size:16px;
+
+    font-weight:normal;
+
+}
+
+.botao-editar{
+    padding:8px 18px;
+}

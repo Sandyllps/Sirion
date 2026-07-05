@@ -7,13 +7,31 @@ import CardUltimaIrrigacao from "../Dashboard/CardUltimaIrrigacao";
 import PainelAlertas from "../Dashboard/CardAlertas";
 import GraficoUmidade from "../Dashboard/GraficoUmidade";
 
-function PainelLateral({ dados }) {
+function PainelLateral({ dados, aoEditarZona }) {
 
     return (
 
         <main className="painel-dashboard">
 
-            <h2>Dashboard</h2>
+            <section className="cabecalho-dashboard">
+
+                <div>
+                    <h2>
+                        Dashboard
+                    </h2>
+
+                    <h3>
+                        Jardim Principal
+                    </h3>
+                </div>
+
+                <button
+                    className="botao-editar"
+                    onClick={aoEditarZona}
+                >
+                    Editar
+                </button>
+            </section>
 
             <section className="conteudo-dashboard">
 
