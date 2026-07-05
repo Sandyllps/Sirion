@@ -23,6 +23,11 @@ const int MAX_SENSORES_UMIDADE = 10; // ajuste se quiser suportar mais sensores
 int pinosSensoresUmidade[MAX_SENSORES_UMIDADE];
 int quantidadeSensoresUmidade = 0;
 
+//o valor maximo e minimo da leitura vai depender do sensor utilizaodo
+//pode ser que para uns sensores, mais umidade seja um valor mais baixo, e em outros casos, o cotrário
+int leituraMinimaSensorUmidade = 4095;
+int leituraMaximaSensorUmidade = 0;
+
 
 //função para conectar ao wifi
 void setup_wifi() {
@@ -221,15 +226,47 @@ void loop() {
   
   if (now - lastMsg > 5000) {
     lastMsg = now;
-    
-    //a lógica pra ler um sensor iria aqui. Exemplo de mentira:
-    int valorSensor = random(10, 50); 
-    String payload = String(valorSensor);
-    
-    Serial.print("Publicando leitura do sensor: ");
-    Serial.println(payload);
-    
-    client.publish("sirion/jardim/umidade", payload.c_str());
+
+    if (quantidadeSensoresUmidade > 0) {
+      long somaUmidade = 0;
+
+      for (int i = 0; i < quantidadeSensoresUmidade; i++) {
+        int leitura = analogRead(pinosSensoresUmidade[i]);
+        int porcentagemUmidade = converterLeituraUmidadeParaPorcentagem(leitura);
+        somaUmidade += porcentagemUmidade;
+
+        Serial.print("Leitura do sensor de umidade no pino ");
+        Serial.print(pinosSensoresUmidade[i]);
+        Serial.print(": ");
+        Serial.println(leitura);
+        Serial.print("Leitura percentual: ");
+        Serial.print(porcentagemUmidade);
+        Serial.println("%");
+      }
+      
+      int mediaUmidade = somaUmidade / quantidadeSensoresUmidade;
+      String payload = String(mediaUmidade);
+
+      Serial.print("Média da umidade: ");
+      Serial.println(mediaUmidade);
+
+      Serial.print("Publicando leitura do sensor: ");
+      Serial.println(payload);
+
+      client.publish("sirion/jardim/umidade", payload.c_str());
+
+      //TODO: usar os dados da API nas condições ao invés de dados fixos como 20 e 45
+      //pesquisar como conectar o sensor de umidade real pra enviar os dados
+      //Pesquisar como fazer para não queimar/estragar os sensores de umidade, saber como usá-los. 
+      if(mediaUmidade < 20){
+        digitalWrite(pinoBombaInt, HIGH);
+      }else if(mediaUmidade >= 45){
+        digitalWrite(pinoBombaInt, LOW);
+      }
+
+    } else {
+      Serial.println("Nenhum sensor de umidade configurado para leitura.");
+    }
   }
 }
 
@@ -381,5 +418,44 @@ void fazerRequisicaoGET() {
   } else {
     Serial.println("Wi-Fi desconectado. Impossível fazer o GET.");
   }
+}
+
+
+
+int converterLeituraUmidadeParaPorcentagem(int leituraBruta) {
+  //evita divisão por zero caso os dois valores globais sejam iguais
+  if (leituraMinimaSensorUmidade == leituraMaximaSensorUmidade) {
+    Serial.println("Erro: leituraMinimaSensorUmidade e leituraMaximaSensorUmidade não podem ser iguais.");
+    return 0;
+  }
+
+  int porcentagem = 0;
+
+  //caso normal: o valor mínimo é menor que o valor máximo
+  if (leituraMinimaSensorUmidade < leituraMaximaSensorUmidade) {
+    porcentagem = map(
+      leituraBruta,
+      leituraMinimaSensorUmidade,
+      leituraMaximaSensorUmidade,
+      0,
+      100
+    );
+  } 
+  //caso invertido: o valor mínimo configurado é maior que o máximo configurado
+  else {
+    porcentagem = map(
+      leituraBruta,
+      leituraMinimaSensorUmidade,
+      leituraMaximaSensorUmidade,
+      0,
+      100
+    );
+  }
+
+  //garante que o valor fique entre 0 e 100
+  if (porcentagem < 0) porcentagem = 0;
+  if (porcentagem > 100) porcentagem = 100;
+
+  return porcentagem;
 }
 
