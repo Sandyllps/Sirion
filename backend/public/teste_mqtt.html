@@ -25,6 +25,7 @@
     <button onclick="enviarMensagem()">Publicar</button>
     <br><br>
     <button id="interruptor" onclick="ligarDesligar()">Ligar LED</button>
+    <button id="recarregar" onclick="recarregarDadosEsp()">Recarregar</button>
   </div>
 
   <script>
@@ -73,8 +74,11 @@
 
 
     function ligarDesligar(){
-      cliente.publish("sirion/jardim/switch", "")
-      
+      cliente.publish("sirion/jardim/switch", "");
+    }
+
+    function recarregarDadosEsp(){
+      cliente.publish("sirion/jardim/recarregar", "");
     }
   </script>
 </body>

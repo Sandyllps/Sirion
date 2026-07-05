@@ -3,9 +3,7 @@ import "./menuZonas.css";
 function MenuZonas() {
 
     const zonas = [
-        "Horta Principal",
-        "Jardim Frontal",
-        "Quintal"
+        "Jardim Principal",
     ];
 
     return(

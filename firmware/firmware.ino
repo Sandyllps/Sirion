@@ -1,17 +1,11 @@
-#include <WiFi.h>
-#include <PubSubClient.h>
-#include <cstring>
-#include <HTTPClient.h>
-#include <ArduinoJson.h> 
+#include <WiFi.h>;
+#include <PubSubClient.h>;
+#include <cstring>;
+#include <HTTPClient.h>;
+#include <ArduinoJson.h>;
+#include "credentials.h";
 
 
-//configurações manuais do usuário
-const char* ssid = "";
-const char* password = "";
-const char* chave_esp = "8677r5ygry6f6yy56";
-//Configurações do broker MQTT (o servidor node.js)
-//aqui coloco o endereço IP IPv4 da máquina onde o servidor node está rodando.
-const char* mqtt_server = "192.168.0.101"; 
 const int mqtt_port = 1883; // A porta TCP que configuramos no backend
 
 
@@ -20,6 +14,19 @@ int ligado = 0;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
+
+//variáveis globais para guardar os pinos já convertidos
+int pinoSensorVazaoInt = -1;
+int pinoBombaInt = -1;
+
+const int MAX_SENSORES_UMIDADE = 10; // ajuste se quiser suportar mais sensores
+int pinosSensoresUmidade[MAX_SENSORES_UMIDADE];
+int quantidadeSensoresUmidade = 0;
+
+//o valor maximo e minimo da leitura vai depender do sensor utilizaodo
+//pode ser que para uns sensores, mais umidade seja um valor mais baixo, e em outros casos, o cotrário
+int leituraMinimaSensorUmidade = 4095;
+int leituraMaximaSensorUmidade = 0;
 
 
 //função para conectar ao wifi
@@ -36,7 +43,7 @@ void setup_wifi() {
     Serial.print(".");
     Serial.print(" Status: ");
     Serial.println(WiFi.status());
-}
+  }
 
   Serial.println("");
   Serial.println("WiFi conectado!");
@@ -47,9 +54,9 @@ void setup_wifi() {
 
 //função de callback (quando recebe mensagem)
 void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Mensagem recebida no tópico [");
+  Serial.print("Mensagem recebida no tópico ");
   Serial.print(topic);
-  Serial.print("]: ");
+  Serial.print(": ");
   
   String mensagem = "";
   for (int i = 0; i < length; i++) {
@@ -59,15 +66,32 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   //aqui colocarei depois a lógica para acender LED, ligar relé etc
   if(strcmp(topic, "sirion/jardim/switch") == 0){
+    if (!pinoPodeSerOutput(pinoBombaInt)) {
+      Serial.println("Erro: pino da bomba ainda não foi configurado corretamente.");
+      return;
+    }
+
     if(ligado == 0){
-      digitalWrite(2, HIGH);
+      digitalWrite(pinoBombaInt, HIGH);
       ligado = 1;
+      Serial.print("Bomba/Led ligada no pino ");
+      Serial.println(pinoBombaInt);
     }else{
-      digitalWrite(2,LOW);
+      digitalWrite(pinoBombaInt,LOW);
       ligado = 0;
+      Serial.print("Bomba/Led desligada no pino ");
+      Serial.println(pinoBombaInt);
     }
   }
+
+  if(strcmp(topic, "sirion/jardim/recarregar") == 0){
+    Serial.println("Recebido comando para recarregar configuracoes do ESP32...");
+    fazerRequisicaoGET();
+  }
 }
+
+//TODO: deixar de enviar pro servidor valores de umidade aleatórios. No lugar disso, enviar o valor do pino de umidade (o valor que vem da API)
+//TODO: em outra função, fazer o cálculo de média da umidade e mandar a instrução de ligar e desligar a bomba baseado nessa média e os valores limite min e max de umidade
 
 
 //função pra reconectar ao Broker MQTT
@@ -90,6 +114,7 @@ void reconnect() {
       //assina/se inscreve em um tópico para ouvir comandos
       client.subscribe("sirion/comandos");
       client.subscribe("sirion/jardim/switch");
+      client.subscribe("sirion/jardim/recarregar");
 
       //aqui vou chamara a função para pedir os dados do esp
       fazerRequisicaoGET();
@@ -104,6 +129,73 @@ void reconnect() {
 }
 
 
+//função de conversão para os nomes exatos da placa esp
+int converterPinoParaInt(String pinoTexto) {
+  pinoTexto.trim();
+  pinoTexto.toUpperCase();
+
+  //lado esquerdo da placa
+  if (pinoTexto == "SP")  return 36; // GPIO36
+  if (pinoTexto == "SN")  return 39; // GPIO39
+  if (pinoTexto == "G34") return 34;
+  if (pinoTexto == "G35") return 35;
+  if (pinoTexto == "G32") return 32;
+  if (pinoTexto == "G33") return 33;
+  if (pinoTexto == "G25") return 25;
+  if (pinoTexto == "G26") return 26;
+  if (pinoTexto == "G27") return 27;
+  if (pinoTexto == "G14") return 14;
+  if (pinoTexto == "G12") return 12;
+  if (pinoTexto == "G13") return 13;
+  if (pinoTexto == "SD2") return 9;
+  if (pinoTexto == "SD3") return 10;
+  if (pinoTexto == "CMD") return 11;
+
+  //lado direito da placa
+  if (pinoTexto == "G23") return 23;
+  if (pinoTexto == "G22") return 22;
+  if (pinoTexto == "TXD") return 1;
+  if (pinoTexto == "RXD") return 3;
+  if (pinoTexto == "G21") return 21;
+  if (pinoTexto == "G19") return 19;
+  if (pinoTexto == "G18") return 18;
+  if (pinoTexto == "G5")  return 5;
+  if (pinoTexto == "G17") return 17;
+  if (pinoTexto == "G16") return 16;
+  if (pinoTexto == "G4")  return 4;
+  if (pinoTexto == "G0")  return 0;
+  if (pinoTexto == "G2")  return 2;
+  if (pinoTexto == "G15") return 15;
+  if (pinoTexto == "SD1") return 8;
+  if (pinoTexto == "SD0") return 7;
+  if (pinoTexto == "CLK") return 6;
+
+  //esses pinos não são utilizáveis
+  if (pinoTexto == "3V3") return -10;
+  if (pinoTexto == "EN")  return -11;
+  if (pinoTexto == "GND") return -12;
+  if (pinoTexto == "5V")  return -13;
+
+  Serial.println("⚠️ AVISO: Pino não reconhecido na tradução -> " + pinoTexto);
+  return -1;
+}
+
+//função auxiliar pra dizer se o pino pode ser usado como saída
+bool pinoPodeSerOutput(int pino) {
+  // pinos somente de entrada
+  if (pino == 34 || pino == 35 || pino == 36 || pino == 39) return false;
+
+  // pinos da flash/SD - melhor não usar
+  if (pino == 6 || pino == 7 || pino == 8 || pino == 9 || pino == 10 || pino == 11) return false;
+
+  // pinos inválidos retornados pela função
+  if (pino < 0) return false;
+
+  return true;
+}
+
+
+
 void setup() {
   Serial.begin(115200);
   setup_wifi();
@@ -115,6 +207,7 @@ void setup() {
   //informa qual função será chamada quando chegar uma mensagem
   client.setCallback(callback);
 }
+
 
 
 //loop principal
@@ -133,15 +226,47 @@ void loop() {
   
   if (now - lastMsg > 5000) {
     lastMsg = now;
-    
-    //a lógica pra ler um sensor iria aqui. Exemplo de mentira:
-    int valorSensor = random(10, 50); 
-    String payload = String(valorSensor);
-    
-    Serial.print("Publicando leitura do sensor: ");
-    Serial.println(payload);
-    
-    client.publish("sirion/jardim/umidade", payload.c_str());
+
+    if (quantidadeSensoresUmidade > 0) {
+      long somaUmidade = 0;
+
+      for (int i = 0; i < quantidadeSensoresUmidade; i++) {
+        int leitura = analogRead(pinosSensoresUmidade[i]);
+        int porcentagemUmidade = converterLeituraUmidadeParaPorcentagem(leitura);
+        somaUmidade += porcentagemUmidade;
+
+        Serial.print("Leitura do sensor de umidade no pino ");
+        Serial.print(pinosSensoresUmidade[i]);
+        Serial.print(": ");
+        Serial.println(leitura);
+        Serial.print("Leitura percentual: ");
+        Serial.print(porcentagemUmidade);
+        Serial.println("%");
+      }
+      
+      int mediaUmidade = somaUmidade / quantidadeSensoresUmidade;
+      String payload = String(mediaUmidade);
+
+      Serial.print("Média da umidade: ");
+      Serial.println(mediaUmidade);
+
+      Serial.print("Publicando leitura do sensor: ");
+      Serial.println(payload);
+
+      client.publish("sirion/jardim/umidade", payload.c_str());
+
+      //TODO: usar os dados da API nas condições ao invés de dados fixos como 20 e 45
+      //pesquisar como conectar o sensor de umidade real pra enviar os dados
+      //Pesquisar como fazer para não queimar/estragar os sensores de umidade, saber como usá-los. 
+      if(mediaUmidade < 20){
+        digitalWrite(pinoBombaInt, HIGH);
+      }else if(mediaUmidade >= 45){
+        digitalWrite(pinoBombaInt, LOW);
+      }
+
+    } else {
+      Serial.println("Nenhum sensor de umidade configurado para leitura.");
+    }
   }
 }
 
@@ -151,8 +276,11 @@ void fazerRequisicaoGET() {
   if (WiFi.status() == WL_CONNECTED) {
     HTTPClient http;
 
-    //colocamos aqui o ip do servidor e a rota da API
-    String serverPath = "http://192.168.0.101:8080/zone?chave_esp=ufg8r78r387trugc8r7gcyeucye";
+    //montando a url com as variáveis do credentials.h
+    String serverPath = "http://";
+    serverPath += mqtt_server;
+    serverPath += ":8080/zone?chave_esp=";
+    serverPath += chave_esp;
     
     //inicaindo a conexão
     http.begin(serverPath);
@@ -166,6 +294,8 @@ void fazerRequisicaoGET() {
       
       //pega o corpo da resposta da API/o texto do JSON
       String payload = http.getString();
+
+      Serial.println("Payload recebido da API: " + payload);
       
       //aqui prepara-se a memória pra processar o JSON 
       //O valor 1024 bytes geralmente é suficiente para respostas normais
@@ -177,6 +307,14 @@ void fazerRequisicaoGET() {
       if (error) {
         Serial.print("Falha ao analisar o JSON: ");
         Serial.println(error.c_str());
+        http.end();
+        return;
+      }
+
+      //aqui verifica se a lista veio vazia
+      if (doc.size() == 0) {
+        Serial.println("Aviso: O servidor não retornou nenhum dado (Chave incorreta ou banco vazio).");
+        http.end();
         return;
       }
 
@@ -206,18 +344,69 @@ void fazerRequisicaoGET() {
       }
 
 
-      //TODO: pesquisar como deixar os dados do wifi em outro arquivo, ip do servidor, chave do esp
-      //em outro arquivo e deixar isso no gitignore para não subir pro github.
-      
-      //TODO: como fazer a conversão dos pinos que estão em string (ex: "G2", "G3") para seu valor correspondente em int, pois no código precisamos do valor inteiro
+      pinoSensorVazaoInt = converterPinoParaInt(String(pino_sensor_vazao));
 
-      //TODO: depois de fazer a conversão dos pinos, inicializar:
+      if (pinoSensorVazaoInt < 0) {
+        Serial.println("Erro: pino do sensor de vazão inválido ou não utilizável.");
+      } else {
+        Serial.print("Pino do sensor de vazão convertido para inteiro: ");
+        Serial.println(pinoSensorVazaoInt);
+      }
+
+      pinoBombaInt = converterPinoParaInt(String(pino_bomba));
+
+      if (pinoBombaInt < 0) {
+        Serial.println("Erro: pino da bomba inválido ou não utilizável.");
+      } else {
+        Serial.print("Pino da bomba convertido para inteiro: ");
+        Serial.println(pinoBombaInt);
+      }
+
+      quantidadeSensoresUmidade = 0;
+
+      for (int i = 0; i < sensores_umidade.size() && i < MAX_SENSORES_UMIDADE; i++) {
+        const char* pinoTexto = sensores_umidade[i]["pino"];
+        int pinoConvertido = converterPinoParaInt(String(pinoTexto));
+
+        if (pinoConvertido < 0) {
+          Serial.print("Erro: pino de sensor de umidade inválido -> ");
+          Serial.println(pinoTexto);
+        } else {
+          pinosSensoresUmidade[quantidadeSensoresUmidade] = pinoConvertido;
+          quantidadeSensoresUmidade++;
+
+          Serial.print("Pino de sensor de umidade convertido: ");
+          Serial.print(pinoTexto);
+          Serial.print(" -> ");
+          Serial.println(pinoConvertido);
+        }
+      }
+
+      //nicializado:
       //o pino de vazão como entrada (input)
       //o pino da bomba como saída (output)
       //os pinos de umidade como entrada (input)
+      if (pinoSensorVazaoInt >= 0) {
+        pinMode(pinoSensorVazaoInt, INPUT);
+        Serial.println("Pino do sensor de vazão inicializado como INPUT.");
+      }
 
-      //TODO: em outra função, fazer o cálculo de média da umidade e mandar a instrução de ligar e desligar a bomba baseado nessa média e os valores limite min e max de umidade 
+      if (pinoPodeSerOutput(pinoBombaInt)) {
+        pinMode(pinoBombaInt, OUTPUT);
+        digitalWrite(pinoBombaInt, LOW);
+        Serial.println("Pino da bomba inicializado como OUTPUT.");
+      } else {
+        Serial.println("Erro: o pino da bomba não pode ser usado como OUTPUT.");
+      }
 
+      for (int i = 0; i < quantidadeSensoresUmidade; i++) {
+        pinMode(pinosSensoresUmidade[i], INPUT);
+      }
+      Serial.println("Pinos dos sensores de umidade inicializados como INPUT.");
+
+
+
+      //faznedo o cálculo de média da umidade e mandando a instrução de ligar e desligar a bomba baseado nessa média e os valores limite min e max de umidade 
     } else {
       Serial.print("Erro na requisição GET. Código do erro: ");
       Serial.println(httpResponseCode);
@@ -230,3 +419,43 @@ void fazerRequisicaoGET() {
     Serial.println("Wi-Fi desconectado. Impossível fazer o GET.");
   }
 }
+
+
+
+int converterLeituraUmidadeParaPorcentagem(int leituraBruta) {
+  //evita divisão por zero caso os dois valores globais sejam iguais
+  if (leituraMinimaSensorUmidade == leituraMaximaSensorUmidade) {
+    Serial.println("Erro: leituraMinimaSensorUmidade e leituraMaximaSensorUmidade não podem ser iguais.");
+    return 0;
+  }
+
+  int porcentagem = 0;
+
+  //caso normal: o valor mínimo é menor que o valor máximo
+  if (leituraMinimaSensorUmidade < leituraMaximaSensorUmidade) {
+    porcentagem = map(
+      leituraBruta,
+      leituraMinimaSensorUmidade,
+      leituraMaximaSensorUmidade,
+      0,
+      100
+    );
+  } 
+  //caso invertido: o valor mínimo configurado é maior que o máximo configurado
+  else {
+    porcentagem = map(
+      leituraBruta,
+      leituraMinimaSensorUmidade,
+      leituraMaximaSensorUmidade,
+      0,
+      100
+    );
+  }
+
+  //garante que o valor fique entre 0 e 100
+  if (porcentagem < 0) porcentagem = 0;
+  if (porcentagem > 100) porcentagem = 100;
+
+  return porcentagem;
+}
+

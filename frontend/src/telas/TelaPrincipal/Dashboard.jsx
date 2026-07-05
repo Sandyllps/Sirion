@@ -4,7 +4,7 @@ import Cabecalho from "../../componentes/Cabecalho/Cabecalho";
 import MenuZonas from "../../componentes/MenuZonas/MenuZonas";
 import PainelLateral from "../../componentes/ConteudoDashboard/ConteudoDashboard";
 
-import "./TelaPrincipal/Dashboard.css";
+import "./Dashboard.css";
 
 function Dashboard(){
 
@@ -58,6 +58,7 @@ function Dashboard(){
 
                 <PainelLateral
                     dados={dadosDashboard}
+                    aoEditarZona={abrirEditarZona}
                 />
 
             </div>
