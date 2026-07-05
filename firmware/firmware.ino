@@ -1,9 +1,9 @@
-#include <WiFi.h>;
-#include <PubSubClient.h>;
-#include <cstring>;
-#include <HTTPClient.h>;
-#include <ArduinoJson.h>;
-#include "credentials.h";
+#include <WiFi.h>
+#include <PubSubClient.h>
+#include <cstring>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+#include "credentials.h"
 
 
 const int mqtt_port = 1883; // A porta TCP que configuramos no backend
@@ -26,7 +26,16 @@ int quantidadeSensoresUmidade = 0;
 //o valor maximo e minimo da leitura vai depender do sensor utilizaodo
 //pode ser que para uns sensores, mais umidade seja um valor mais baixo, e em outros casos, o cotrário
 int leituraMinimaSensorUmidade = 4095;
-int leituraMaximaSensorUmidade = 0;
+int leituraMaximaSensorUmidade = 1200;
+
+//valores de umidade configurados na API pra controlar a bomba
+int umidadeMinimaConfigurada = 0;
+int umidadeMaximaConfigurada = 100;
+
+void fazerRequisicaoGET();
+int converterLeituraUmidadeParaPorcentagem(int leituraBruta);
+bool pinoPodeSerOutput(int pino);
+int converterPinoParaInt(String pinoTexto);
 
 
 //função para conectar ao wifi
@@ -199,7 +208,6 @@ bool pinoPodeSerOutput(int pino) {
 void setup() {
   Serial.begin(115200);
   setup_wifi();
-  pinMode(2, OUTPUT);
   
   //informa o endereço do broker e a porta TCP
   client.setServer(mqtt_server, mqtt_port);
@@ -255,13 +263,21 @@ void loop() {
 
       client.publish("sirion/jardim/umidade", payload.c_str());
 
-      //TODO: usar os dados da API nas condições ao invés de dados fixos como 20 e 45
+  
       //pesquisar como conectar o sensor de umidade real pra enviar os dados
       //Pesquisar como fazer para não queimar/estragar os sensores de umidade, saber como usá-los. 
-      if(mediaUmidade < 20){
-        digitalWrite(pinoBombaInt, HIGH);
-      }else if(mediaUmidade >= 45){
-        digitalWrite(pinoBombaInt, LOW);
+      if (pinoPodeSerOutput(pinoBombaInt)) {
+        if(mediaUmidade < 20){
+          digitalWrite(pinoBombaInt, HIGH);
+          ligado = 1;
+          Serial.println("Bomba ligada automaticamente por baixa umidade.");
+        } else if(mediaUmidade >= 45){
+          digitalWrite(pinoBombaInt, LOW);
+          ligado = 0;
+          Serial.println("Bomba desligada automaticamente por umidade suficiente.");
+        }
+      } else {
+        Serial.println("Erro: pino da bomba inválido para controle automático.");
       }
 
     } else {
@@ -269,7 +285,6 @@ void loop() {
     }
   }
 }
-
 
 void fazerRequisicaoGET() {
   //verifica se o Wi-Fi está conectado antes de tentar
@@ -323,8 +338,8 @@ void fazerRequisicaoGET() {
       //pegando o objeto no índice 0 da array
       int id_usuario = doc[0]["id_usuario"]; 
       const char* nome = doc[0]["nome"];
-      int min_umidade = doc[0]["min_umidade"];
-      int max_umidade = doc[0]["max_umidade"];
+      umidadeMinimaConfigurada = doc[0]["min_umidade"];
+      umidadeMaximaConfigurada = doc[0]["max_umidade"];
       const char* pino_sensor_vazao = doc[0]["esp32"]["pino_sensor_vazao"];
       const char* pino_bomba = doc[0]["esp32"]["pino_bomba"];
       JsonArray sensores_umidade = doc[0]["esp32"]["sensores_umidade"];
@@ -333,8 +348,8 @@ void fazerRequisicaoGET() {
       Serial.println("Dados Extraídos do Objeto");
       Serial.print("ID do usuário: "); Serial.println(id_usuario);
       Serial.print("nome: "); Serial.println(nome);
-      Serial.print("Umidade mínima: "); Serial.println(min_umidade);
-      Serial.print("Umidade máxima: "); Serial.println(max_umidade);
+      Serial.print("Umidade mínima: "); Serial.println(umidadeMinimaConfigurada);
+      Serial.print("Umidade máxima: "); Serial.println(umidadeMaximaConfigurada);
       Serial.print("Pino do sensor de vazão: "); Serial.println(pino_sensor_vazao);
       Serial.print("Pino da bomba: "); Serial.println(pino_bomba);
       Serial.println("Pinos dos sensores de umidade: ");
