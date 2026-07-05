@@ -54,12 +54,17 @@ function Dashboard(){
             />
 
             <div className="corpo-dashboard">
-                {menuAberto && <MenuZonas />}
+    
+                <div className={`sidebar ${menuAberto ? "aberta" : "fechada"}`}>
+                    <MenuZonas />
+                </div>
 
-                <PainelLateral
-                    dados={dadosDashboard}
-                    aoEditarZona={abrirEditarZona}
-                />
+                <div className="dashboard-container">
+                    <PainelLateral
+                        dados={dadosDashboard}
+                        aoEditarZona={abrirEditarZona}
+                    />
+                </div>
 
             </div>
 
