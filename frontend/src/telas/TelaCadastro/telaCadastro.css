@@ -1,0 +1,47 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+.pagina-cadastro{
+    width:100vw;
+    height:100vh;
+    display:flex;
+}
+
+.container-cadastro{
+    width:100%;
+    height:100%;
+    display:flex;
+}
+
+.imagem-lateral{
+    width:40%;
+    height:100%;
+    position:relative;
+    overflow:hidden;
+    flex-shrink:0;
+}
+
+.imagem-lateral img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:20px 0 0 20px;
+}
+
+.painel-cadastro{
+    width:60%;
+    height:100%;
+    background:#217B71;
+    border-radius:0 20px 20px 0;
+    position:relative;
+    display:flex;
+    justify-content:center;
+    text-align:left;
+}

@@ -7,7 +7,8 @@ import CardUltimaIrrigacao from "../Dashboard/CardUltimaIrrigacao";
 import PainelAlertas from "../Dashboard/CardAlertas";
 import GraficoUmidade from "../Dashboard/GraficoUmidade";
 
-function PainelLateral({ dados, aoEditarZona }) {
+function PainelLateral({ zona, aoEditarZona }) {
+
 
     return (
 
@@ -16,13 +17,9 @@ function PainelLateral({ dados, aoEditarZona }) {
             <section className="cabecalho-dashboard">
 
                 <div>
-                    <h2>
-                        Dashboard
+                    <h2 className="titulo-zona">
+                        {zona?.nome || "Selecione uma zona"}
                     </h2>
-
-                    <h3>
-                        Jardim Principal
-                    </h3>
                 </div>
 
                 <button
@@ -40,41 +37,21 @@ function PainelLateral({ dados, aoEditarZona }) {
                 <CardBomba />
 
                 <CardVolume
-                    volume={2.35}
+                    volume={zona?.volume}
                 />
 
                 <CardModoIrrigacao />
 
                 <CardUltimaIrrigacao
-                    ultimaIrrigacao="14:32"
+                    ultimaIrrigacao={zona?.ultimaIrrigacao}
                 />
 
                 <PainelAlertas
-
-                    alertas={[
-
-                        {
-                            horario: "14:32",
-                            mensagem: "Solo seco. Irrigação iniciada automaticamente."
-                        },
-
-                        {
-                            horario: "14:38",
-                            mensagem: "Proteção Dry-Run ativada."
-                        }
-                    ]}
+                    alertas={zona?.alertas || []}
                 />
 
                 <GraficoUmidade
-                    dados={[
-                        {hora:"08:00", umidade:20},
-                        {hora:"09:00", umidade:24},
-                        {hora:"10:00", umidade:28},
-                        {hora:"11:00", umidade:35},
-                        {hora:"12:00", umidade:41},
-                        {hora:"13:00", umidade:38}
-                    ]}
-
+                    dados={zona?.historicoUmidade || []}
                 />
 
             </section>
