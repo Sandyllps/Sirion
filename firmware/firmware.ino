@@ -5,12 +5,9 @@
 #include <ArduinoJson.h>
 #include "credentials.h"
 
-
 const int mqtt_port = 1883; // A porta TCP que configuramos no backend
 
-
-int ligado = 0;
-
+int bombaLigada = 0;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -37,6 +34,15 @@ int converterLeituraUmidadeParaPorcentagem(int leituraBruta);
 bool pinoPodeSerOutput(int pino);
 int converterPinoParaInt(String pinoTexto);
 
+volatile uint32_t pulseCount = 0;
+float consumoML = 0.0;
+//aproximadamente 5880 pulsos por litro
+const float ML_POR_PULSO = 1000.0 / 5880.0;
+
+void IRAM_ATTR flowISR()
+{
+    pulseCount++;
+}
 
 //função para conectar ao wifi
 void setup_wifi() {
@@ -60,7 +66,6 @@ void setup_wifi() {
   Serial.println(WiFi.localIP());
 }
 
-
 //função de callback (quando recebe mensagem)
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Mensagem recebida no tópico ");
@@ -80,14 +85,14 @@ void callback(char* topic, byte* payload, unsigned int length) {
       return;
     }
 
-    if(ligado == 0){
+    if(bombaLigada == 0){
       digitalWrite(pinoBombaInt, HIGH);
-      ligado = 1;
+      bombaLigada = 1;
       Serial.print("Bomba/Led ligada no pino ");
       Serial.println(pinoBombaInt);
     }else{
       digitalWrite(pinoBombaInt,LOW);
-      ligado = 0;
+      bombaLigada = 0;
       Serial.print("Bomba/Led desligada no pino ");
       Serial.println(pinoBombaInt);
     }
@@ -101,7 +106,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 //TODO: deixar de enviar pro servidor valores de umidade aleatórios. No lugar disso, enviar o valor do pino de umidade (o valor que vem da API)
 //TODO: em outra função, fazer o cálculo de média da umidade e mandar a instrução de ligar e desligar a bomba baseado nessa média e os valores limite min e max de umidade
-
 
 //função pra reconectar ao Broker MQTT
 void reconnect() {
@@ -136,7 +140,6 @@ void reconnect() {
     }
   }
 }
-
 
 //função de conversão para os nomes exatos da placa esp
 int converterPinoParaInt(String pinoTexto) {
@@ -203,8 +206,6 @@ bool pinoPodeSerOutput(int pino) {
   return true;
 }
 
-
-
 void setup() {
   Serial.begin(115200);
   setup_wifi();
@@ -216,8 +217,6 @@ void setup() {
   client.setCallback(callback);
 }
 
-
-
 //loop principal
 void loop() {
   //aqui garantimos que a conexão com o broker está ativa
@@ -228,9 +227,10 @@ void loop() {
   //mantém a comunicação rodando em segundo plano
   client.loop();
 
+  unsigned long now = millis();
+
   //ex.: publicar uma mensagem a cada 5 segundos
   static unsigned long lastMsg = 0;
-  unsigned long now = millis();
   
   if (now - lastMsg > 5000) {
     lastMsg = now;
@@ -263,18 +263,32 @@ void loop() {
 
       client.publish("sirion/jardim/umidade", payload.c_str());
 
-  
-      //pesquisar como conectar o sensor de umidade real pra enviar os dados
-      //Pesquisar como fazer para não queimar/estragar os sensores de umidade, saber como usá-los. 
+      //atualizarConsumo() apenas contabiliza os pulsos do sensor de vazão e soma no consumo total
+      bool houveFluxo = atualizarConsumo();
+
+      Serial.print("Consumo acumulado (mL): ");
+      Serial.println(consumoML);
+
+      if (houveFluxo) {
+        Serial.println("Fluxo de água detectado pelo sensor de vazão.");
+      } else {
+        Serial.println("Nenhum pulso de vazão detectado nos últimos 5 segundos.");
+      }
+
+      //aqui estamos usando a média d eumidade para saber se precisamos ligar/desligar a bomba
       if (pinoPodeSerOutput(pinoBombaInt)) {
-        if(mediaUmidade < 20){
-          digitalWrite(pinoBombaInt, HIGH);
-          ligado = 1;
-          Serial.println("Bomba ligada automaticamente por baixa umidade.");
-        } else if(mediaUmidade >= 45){
-          digitalWrite(pinoBombaInt, LOW);
-          ligado = 0;
-          Serial.println("Bomba desligada automaticamente por umidade suficiente.");
+        if(mediaUmidade < umidadeMinimaConfigurada){
+          if (bombaLigada == 0) {
+            digitalWrite(pinoBombaInt, HIGH);
+            bombaLigada = 1;
+            Serial.println("Bomba ligada automaticamente por baixa umidade.");
+          }
+        } else if(mediaUmidade >= umidadeMaximaConfigurada){
+          if (bombaLigada == 1) {
+            digitalWrite(pinoBombaInt, LOW);
+            bombaLigada = 0;
+            Serial.println("Bomba desligada automaticamente por umidade suficiente.");
+          }
         }
       } else {
         Serial.println("Erro: pino da bomba inválido para controle automático.");
@@ -358,7 +372,6 @@ void fazerRequisicaoGET() {
         Serial.println(pino);
       }
 
-
       pinoSensorVazaoInt = converterPinoParaInt(String(pino_sensor_vazao));
 
       if (pinoSensorVazaoInt < 0) {
@@ -366,6 +379,15 @@ void fazerRequisicaoGET() {
       } else {
         Serial.print("Pino do sensor de vazão convertido para inteiro: ");
         Serial.println(pinoSensorVazaoInt);
+
+        pinMode(pinoSensorVazaoInt, INPUT_PULLUP);
+
+        detachInterrupt(digitalPinToInterrupt(pinoSensorVazaoInt));
+        attachInterrupt(
+            digitalPinToInterrupt(pinoSensorVazaoInt),
+            flowISR,
+            FALLING
+        );
       }
 
       pinoBombaInt = converterPinoParaInt(String(pino_bomba));
@@ -402,13 +424,13 @@ void fazerRequisicaoGET() {
       //o pino da bomba como saída (output)
       //os pinos de umidade como entrada (input)
       if (pinoSensorVazaoInt >= 0) {
-        pinMode(pinoSensorVazaoInt, INPUT);
-        Serial.println("Pino do sensor de vazão inicializado como INPUT.");
+        Serial.println("Pino do sensor de vazão inicializado como INPUT_PULLUP.");
       }
 
       if (pinoPodeSerOutput(pinoBombaInt)) {
         pinMode(pinoBombaInt, OUTPUT);
         digitalWrite(pinoBombaInt, LOW);
+        bombaLigada = 0;
         Serial.println("Pino da bomba inicializado como OUTPUT.");
       } else {
         Serial.println("Erro: o pino da bomba não pode ser usado como OUTPUT.");
@@ -418,8 +440,6 @@ void fazerRequisicaoGET() {
         pinMode(pinosSensoresUmidade[i], INPUT);
       }
       Serial.println("Pinos dos sensores de umidade inicializados como INPUT.");
-
-
 
       //faznedo o cálculo de média da umidade e mandando a instrução de ligar e desligar a bomba baseado nessa média e os valores limite min e max de umidade 
     } else {
@@ -434,8 +454,6 @@ void fazerRequisicaoGET() {
     Serial.println("Wi-Fi desconectado. Impossível fazer o GET.");
   }
 }
-
-
 
 int converterLeituraUmidadeParaPorcentagem(int leituraBruta) {
   //evita divisão por zero caso os dois valores globais sejam iguais
@@ -474,3 +492,14 @@ int converterLeituraUmidadeParaPorcentagem(int leituraBruta) {
   return porcentagem;
 }
 
+bool atualizarConsumo(){
+    noInterrupts();
+    uint32_t pulsos = pulseCount;
+    pulseCount = 0;
+    interrupts();
+
+    float ml = pulsos * ML_POR_PULSO;
+    consumoML += ml;
+
+    return (pulsos > 0);
+}
