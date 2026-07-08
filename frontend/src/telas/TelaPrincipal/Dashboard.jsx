@@ -9,8 +9,10 @@ import "./Dashboard.css";
 function Dashboard(){
 
     const [menuAberto, setMenuAberto] = useState(true);
-    const [editarZonaAberto, setEditarZonaAberto] = useState(false);
+    const [modalZonaAberto, setModalZonaAberto] = useState(false);
+    const [modoModal, setModoModal] = useState("editar");
     const [dadosDashboard, setDadosDashboard] = useState(null);
+    const [zonaSelecionada, setZonaSelecionada] = useState(null);
 
     useEffect(() => {
         buscarDashboard();
@@ -21,29 +23,34 @@ function Dashboard(){
     }
 
     function abrirEditarZona(){
-
-        setEditarZonaAberto(true);
-
+        setModoModal("editar");
+        setModalZonaAberto(true);
     }
 
-    function fecharEditarZona(){
+    function abrirNovaZona(){
+        setModoModal("nova");
+        setModalZonaAberto(true);
+    }
 
-        setEditarZonaAberto(false);
-
+    function fecharModalZona(){
+        setModalZonaAberto(false);
     }
 
     async function buscarDashboard() {
-
         try {
             const resposta = await fetch("http://localhost:8080/dashboard");
             const dados = await resposta.json();
             setDadosDashboard(dados);
+            if(dados?.zonas?.length){
+                setZonaSelecionada(
+                    dados.zonas[0]
+                );
+            }
         }
 
         catch (erro) {
             console.error("Erro ao buscar dashboard:", erro);
         }
-
     }
 
     return(
@@ -56,12 +63,17 @@ function Dashboard(){
             <div className="corpo-dashboard">
     
                 <div className={`sidebar ${menuAberto ? "aberta" : "fechada"}`}>
-                    <MenuZonas />
+                    <MenuZonas  
+                        zonas={dadosDashboard?.zonas || []}
+                        zonaSelecionada={zonaSelecionada}
+                        aoSelecionarZona={setZonaSelecionada}
+                        aoNovaZona={abrirNovaZona}
+                    />
                 </div>
 
                 <div className="dashboard-container">
                     <PainelLateral
-                        dados={dadosDashboard}
+                        zona={zonaSelecionada}
                         aoEditarZona={abrirEditarZona}
                     />
                 </div>
@@ -70,12 +82,12 @@ function Dashboard(){
 
             <EditarZona
 
-                aberto={editarZonaAberto}
-
-                aoFechar={fecharEditarZona}
+                zona={zonaSelecionada}
+                aberto={modalZonaAberto}
+                modo={modoModal}
+                aoFechar={fecharModalZona}
 
             />
-
         </div>
     );
 }
