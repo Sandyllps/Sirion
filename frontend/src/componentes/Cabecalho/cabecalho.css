@@ -35,7 +35,14 @@
     color:#666;
 }
 
-.status-sistema{
-    font-size:14px;
-    color:green;
+.perfil{
+
+    margin-left:auto;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    color:#222;
+
 }

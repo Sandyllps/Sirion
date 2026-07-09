@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./../../telas/TelaPrincipal/dashboard.css";
+import "./cards.css";
 
 function CardModoIrrigacao() {
 
@@ -17,20 +17,23 @@ function CardModoIrrigacao() {
 
             <h3>Modo de Irrigação</h3>
 
-            <h2>
+            <div className="modo-container">
 
-                {modoAutomatico ? "Automático" : "Manual"}
+                <h2>
 
-            </h2>
+                    {modoAutomatico ? "Automático" : "Manual"}
 
-            <button
-                className="botao-modo"
-                onClick={alterarModo}
-            >
+                </h2>
 
-                Alterar modo
+                <button
+                    className="botao-modo"
+                    onClick={alterarModo}
+                >
 
-            </button>
+                    Alterar modo
+
+                </button>
+            </div>
 
         </section>
 

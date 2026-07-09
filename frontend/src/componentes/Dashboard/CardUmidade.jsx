@@ -1,3 +1,5 @@
+import "./cards.css";
+
 function CardUmidade() {
 
     const umidadeAtual = 58;
@@ -6,13 +8,20 @@ function CardUmidade() {
 
         <section className="cartao-dashboard">
 
-            <h3>Umidade Atual</h3>
+            <div className="linha-umidade">
 
-            <h1>{umidadeAtual}%</h1>
+                <h1>{umidadeAtual}%</h1>
 
-            <p>Faixa ideal: 25% - 45%</p>
+            </div>
 
-            <small>Atualizado agora</small>
+            <div className="faixa-ideal">
+
+                <span>Faixa ideal</span>
+
+                <strong>25% - 45%</strong>
+
+            </div>
+
 
         </section>
 

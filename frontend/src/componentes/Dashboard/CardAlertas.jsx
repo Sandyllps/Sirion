@@ -1,4 +1,4 @@
-import "./../../telas/TelaPrincipal/dashboard.css";
+import "./cards.css";
 
 function PainelAlertas({ alertas }) {
 

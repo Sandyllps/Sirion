@@ -1,3 +1,5 @@
+import "./cards.css";
+import "./graficoUmidade.css";
 import {
 
     LineChart,

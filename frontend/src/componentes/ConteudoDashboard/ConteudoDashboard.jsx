@@ -30,29 +30,44 @@ function PainelLateral({ zona, aoEditarZona }) {
                 </button>
             </section>
 
-            <section className="conteudo-dashboard">
+            <section className="linha-superior">
 
                 <CardUmidade />
 
                 <CardBomba />
 
-                <CardVolume
-                    volume={zona?.volume}
-                />
-
-                <CardModoIrrigacao />
-
                 <CardUltimaIrrigacao
                     ultimaIrrigacao={zona?.ultimaIrrigacao}
                 />
 
-                <PainelAlertas
-                    alertas={zona?.alertas || []}
-                />
+                <CardModoIrrigacao />
+            </section>
 
-                <GraficoUmidade
-                    dados={zona?.historicoUmidade || []}
-                />
+            <section className="linha-inferior">
+
+                <div className="coluna-esquerda">
+                    <GraficoUmidade
+                        dados={zona?.historicoUmidade || []}
+                    />
+                </div>
+
+                <div className="coluna-direita">
+
+                    <div className="painel-alertas">
+
+                        <PainelAlertas
+                            alertas={zona?.alertas || []}
+                        />
+                    </div>
+
+                    <div className="painel-volume">
+                        <CardVolume
+                            volume={zona?.volume}
+                        />
+                    </div>
+                    
+                </div>
+               
 
             </section>
 

@@ -1,4 +1,5 @@
-import "./../../telas/TelaPrincipal/dashboard.css";
+import "./cards.css";
+
 
 function CardVolume({ volume }) {
 
@@ -8,7 +9,7 @@ function CardVolume({ volume }) {
 
             <h3>Consumo da Irrigação</h3>
 
-            <h1>{volume} L</h1>
+            <h1>{volume} </h1>
 
             <p>Total consumido na irrigação atual</p>
 

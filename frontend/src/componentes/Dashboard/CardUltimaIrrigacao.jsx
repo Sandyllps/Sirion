@@ -1,4 +1,5 @@
-import "./../../telas/TelaPrincipal/dashboard.css";
+import "./cards.css";
+
 
 function CardUltimaIrrigacao({ ultimaIrrigacao }) {
 
