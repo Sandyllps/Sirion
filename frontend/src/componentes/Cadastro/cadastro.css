@@ -1,6 +1,7 @@
 
 .formulario-cadastro{
-    width: 75%;
+    width:62%;
+    max-width:620px;
     display:flex;
     flex-direction:column;
 }
@@ -68,3 +69,4 @@ input{
     font-weight: 700;
     font-size:25px;
 }
+

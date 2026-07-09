@@ -1,0 +1,37 @@
+import "./telaLogin.css";
+
+import Carrossel from "../../componentes/Carrossel/Carrossel";
+import BotoesLaterais from "../../componentes/BotoesLaterais/BotoesLaterais";
+import Login from "../../componentes/Login/Login";
+
+function TelaLogin() {
+
+    return (
+
+        <div className="pagina-login">
+
+            <div className="container-login">
+
+                <div className="painel-login">
+
+                    <BotoesLaterais tela="login"/>
+
+                    <Login />
+
+                </div>
+
+                <div className="imagem-lateral">
+
+                    <Carrossel />
+
+                </div>
+
+            </div>
+
+        </div>
+
+    );
+
+}
+
+export default TelaLogin;

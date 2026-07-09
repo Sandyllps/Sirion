@@ -1,8 +1,8 @@
 import "./telaCadastro.css";
 
-import Cadastro from "../../componentes/Cadastro/Cadastro";
 import Carrossel from "../../componentes/Carrossel/Carrossel";
 import BotoesLaterais from "../../componentes/BotoesLaterais/BotoesLaterais";
+import Cadastro from "../../componentes/Cadastro/Cadastro";
 
 function TelaCadastro() {
 
@@ -20,7 +20,7 @@ function TelaCadastro() {
 
                 <div className="painel-cadastro">
 
-                    <BotoesLaterais />
+                    <BotoesLaterais tela="cadastro" />
 
                     <Cadastro />
 

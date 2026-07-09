@@ -1,45 +1,49 @@
-import "./telaCadastro.css";
+import "./cadastro.css";
 
-import Carrossel from "../../componentes/Carrossel/Carrossel";
-import Cadastro from "../../componentes/Cadastro/Cadastro";
 
-function TelaCadastro() {
+function Cadastro() {
 
     return (
 
-        <div className="pagina-cadastro">
+        <div className="formulario-cadastro">
 
-            <div className="container-cadastro">
+            <h1>Seja bem-vindo!</h1>
 
-                <div className="imagem-lateral">
+            <p>Venha fazer parte da Sirion!</p>
 
-                    <Carrossel />
+            <form>
 
-                </div>
+                <label>Nome</label>
+                <input type="text" />
 
-                <div className="painel-cadastro">
+                <label>Email</label>
+                <input type="email" />
 
-                    <div className="botoes-laterais">
+                <div className="linha-senhas">
 
-                        <button className="botao-cadastrar">
+                    <div>
 
-                            Cadastrar
-
-                        </button>
-
-                        <button className="botao-login">
-
-                            Login
-
-                        </button>
+                        <label>Senha</label>
+                        <input type="password" />
 
                     </div>
 
-                    <Cadastro />
+                    <div>
+
+                        <label>Confirmar Senha</label>
+                        <input type="password" />
+
+                    </div>
 
                 </div>
 
-            </div>
+                <button className="botao-enviar">
+
+                    Cadastrar
+
+                </button>
+
+            </form>
 
         </div>
 
@@ -47,4 +51,4 @@ function TelaCadastro() {
 
 }
 
-export default TelaCadastro;
+export default Cadastro;
