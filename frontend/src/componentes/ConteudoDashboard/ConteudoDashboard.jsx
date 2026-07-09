@@ -1,7 +1,6 @@
 import "./conteudoDashboard.css";
 import CardUmidade from "../Dashboard/CardUmidade";
 import CardBomba from "../Dashboard/CardBomba";
-import CardVolume from "../Dashboard/CardVolume";
 import CardModoIrrigacao from "../Dashboard/CardModoIrrigacao";
 import CardUltimaIrrigacao from "../Dashboard/CardUltimaIrrigacao";
 import PainelAlertas from "../Dashboard/CardAlertas";
@@ -59,15 +58,9 @@ function PainelLateral({ zona, aoEditarZona }) {
                             alertas={zona?.alertas || []}
                         />
                     </div>
-
-                    <div className="painel-volume">
-                        <CardVolume
-                            volume={zona?.volume}
-                        />
-                    </div>
                     
                 </div>
-               
+            
 
             </section>
 

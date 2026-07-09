@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
+import { buscarZonasPorUsuario } from "../../api";
+
 import EditarZona from "../../componentes/EditarZona/EditarZona";
 import Cabecalho from "../../componentes/Cabecalho/Cabecalho";
 import MenuZonas from "../../componentes/MenuZonas/MenuZonas";
 import PainelLateral from "../../componentes/ConteudoDashboard/ConteudoDashboard";
+
 
 import "./Dashboard.css";
 
@@ -36,21 +39,31 @@ function Dashboard(){
         setModalZonaAberto(false);
     }
 
+    function atualizarDashboard() {
+        buscarDashboard();
+    }
+
     async function buscarDashboard() {
+
         try {
-            const resposta = await fetch("http://localhost:8080/dashboard");
-            const dados = await resposta.json();
-            setDadosDashboard(dados);
-            if(dados?.zonas?.length){
-                setZonaSelecionada(
-                    dados.zonas[0]
-                );
+            const zonas = await buscarZonasPorUsuario(3);
+
+            setDadosDashboard({
+                zonas: zonas
+            });
+
+            if (zonas.length > 0) {
+                setZonaSelecionada(zonas[0]);
+            } else {
+                setZonaSelecionada(null);
             }
+
+        } catch (erro) {
+
+            console.error("Erro ao buscar zonas:", erro);
+
         }
 
-        catch (erro) {
-            console.error("Erro ao buscar dashboard:", erro);
-        }
     }
 
     return(
@@ -81,12 +94,11 @@ function Dashboard(){
             </div>
 
             <EditarZona
-
                 zona={zonaSelecionada}
                 aberto={modalZonaAberto}
                 modo={modoModal}
                 aoFechar={fecharModalZona}
-
+                aoAtualizar={atualizarDashboard}
             />
         </div>
     );
