@@ -1,31 +1,47 @@
-
 .botoes-laterais{
     position:absolute;
-    left:-95px;
     top:50%;
     transform:translateY(-50%);
     display:flex;
     flex-direction:column;
     gap:18px;
+    z-index:100;
+}
+
+.botoes-laterais.cadastro{
+    left:-65px;
+}
+
+.botoes-laterais.login{
+    right:-65px;
+}
+
+.botao-cadastrar,
+.botao-login{
+    width:130px;
+    height:80px;
+    border:none;
+    border-radius:15px;
+    font-size:20px;
+    transition:.3s;
+    box-shadow:0 8px 18px rgba(0,0,0,.18);
 }
 
 .botao-cadastrar{
-    width: 110px;
-    height: 80px;
-    border:none;
-    border-radius:20px 0 0 20px;
     background:#217B71;
-    color: #ACE5B8;
-    font-size: 20px;
+    color:#ACE5B8;
+    opacity:.55;
 }
 
 .botao-login{
-    width: 95px;
-    height: 80px;
-    border:none;
-    border-radius:20px 0 0 20px;
-    background:#1E5673;
-    color: #ABDEF9;
-    opacity: 80%;
-    font-size: 20px;
+    background:#215E7D;
+    color:#ABDEF9;
+    opacity:.55;
+}
+
+.botao-cadastrar.ativo,
+.botao-login.ativo{
+    opacity:1;
+    transform:scale(1.04);
+    box-shadow:0 10px 24px rgba(0,0,0,.28);
 }

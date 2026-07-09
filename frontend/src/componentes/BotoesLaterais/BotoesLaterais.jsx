@@ -1,7 +1,23 @@
-<div className="botoes-laterais">
+import "./botoesLaterais.css";
 
-    <button>Cadastro</button>
+function BotoesLaterais({ tela }) {
+    return (
+        <div className={`botoes-laterais ${tela}`}>
+            <button
+                type="button"
+                className={tela === "cadastro" ? "botao-cadastrar ativo" : "botao-cadastrar"}
+            >
+                Cadastrar
+            </button>
 
-    <button>Login</button>
+            <button
+                type="button"
+                className={tela === "login" ? "botao-login ativo" : "botao-login"}
+            >
+                Login
+            </button>
+        </div>
+    );
+}
 
-</div>
+export default BotoesLaterais;
