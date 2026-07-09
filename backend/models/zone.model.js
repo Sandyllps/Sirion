@@ -29,10 +29,19 @@ const zoneSchema = new mongoose.Schema({
     },
     // Array de objetos para os sensores
     sensores_umidade: [{
-      pino: { type: String, required: true }
-    }]
+      pino: {
+        type: String,
+        required: true 
+      }
+    }],
+    chave_esp: {
+      type: String, 
+      required: true
+    }
   }
-}, { 
+},
+
+{
   collection: 'zonas_irrigacao'
 });
 
