@@ -1,7 +1,7 @@
-import TelaLogin from "./telas/TelaLogin/TelaLogin";
+import Dashboard from "./telas/TelaPrincipal/Dashboard";
 
 function App() {
-  return <TelaLogin />;
+  return <Dashboard/>;
 }
 
 export default App;
