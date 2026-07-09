@@ -6,18 +6,18 @@ function EditarZona({ aberto, modo, zona, aoFechar }) {
     const [nomeZona, setNomeZona] = useState("Jardim Principal");
     const [chaveZona, setChaveZona] = useState(crypto.randomUUID());
     const [statusConexao, setStatusConexao] = useState("desconectado");
-    const [pinoBomba, setPinoBomba] = useState(23);
-    const [pinoSensorVazao, setPinoSensorVazao] = useState(32);
+    const [pinoBomba, setPinoBomba] = useState("G23");
+    const [pinoSensorVazao, setPinoSensorVazao] = useState("G32");
     const [umidadeMinima, setUmidadeMinima] = useState(25);
     const [umidadeMaxima, setUmidadeMaxima] = useState(45);
     const [sensores, setSensores] = useState([
         {
             id: 1,
-            pino: 34
+            pino: "G34"
         },
         {
             id: 2,
-            pino: 35
+            pino: "G35"
         }
     ]);
 
@@ -72,16 +72,11 @@ function EditarZona({ aberto, modo, zona, aoFechar }) {
 
     function adicionarSensor() {
         setSensores([
-             ...sensores,
-
+            ...sensores,
             {
-
-                id:Date.now(),
-
-                pino:""
-
+                id: Date.now(),
+                pino: ""
             }
-
         ]);
     }
 
@@ -120,19 +115,26 @@ function EditarZona({ aberto, modo, zona, aoFechar }) {
 
     function salvarZona() {
 
+        const idUsuario = 3;
+
         const dadosZona = {
+            id_usuario: idUsuario,
             nome: nomeZona,
-            chave: chaveZona,
-            pinoBomba,
-            pinoSensorVazao,
-            umidadeMinima,
-            umidadeMaxima,
-            sensores
+            min_umidade: umidadeMinima,
+            max_umidade: umidadeMaxima,
+            esp32: {
+                chave_esp: chaveZona,
+                pino_sensor_vazao: pinoSensorVazao,
+                pino_bomba: pinoBomba,
+                sensores_umidade: sensores.map((sensor) => ({
+                    pino: sensor.pino
+                }))
+            }
         };
 
-        console.log(dadosZona);
-        aoFechar();
+        console.log("Dados prontos para API:", dadosZona);
 
+        aoFechar();
     }
 
     if (!aberto) {
@@ -218,10 +220,10 @@ function EditarZona({ aberto, modo, zona, aoFechar }) {
                     </label>
 
                     <input
-                        type="number"
+                        type="text"
                         value={pinoBomba}
                         onChange={(evento) =>
-                            setPinoBomba(Number(evento.target.value))
+                            setPinoBomba(evento.target.value)
                         }
                     />
 
@@ -230,7 +232,7 @@ function EditarZona({ aberto, modo, zona, aoFechar }) {
                     </label>
 
                     <input
-                        type="number"
+                        type="text"
                         value={pinoSensorVazao}
                         onChange={(evento) =>
                             setPinoSensorVazao(Number(evento.target.value))
@@ -252,14 +254,12 @@ function EditarZona({ aberto, modo, zona, aoFechar }) {
                                 </p>
 
                                 <input
-                                    type="number"
+                                    type="text"
                                     value={sensor.pino}
                                     onChange={(evento) =>
                                         alterarPinoSensor(
-
                                             sensor.id,
-                                            Number(evento.target.value)
-
+                                            evento.target.value
                                         )
                                     }
                                 />
