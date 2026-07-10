@@ -33,6 +33,7 @@ void fazerRequisicaoGET();
 int converterLeituraUmidadeParaPorcentagem(int leituraBruta);
 bool pinoPodeSerOutput(int pino);
 int converterPinoParaInt(String pinoTexto);
+bool atualizarConsumo();
 
 volatile uint32_t pulseCount = 0;
 float consumoML = 0.0;
@@ -253,7 +254,12 @@ void loop() {
       }
       
       int mediaUmidade = somaUmidade / quantidadeSensoresUmidade;
-      String payload = String(mediaUmidade);
+
+      String payload = "{\"chave_esp\":\"";
+      payload += chave_esp;
+      payload += "\",\"umidade\":";
+      payload += String(mediaUmidade);
+      payload += "}";
 
       Serial.print("Média da umidade: ");
       Serial.println(mediaUmidade);

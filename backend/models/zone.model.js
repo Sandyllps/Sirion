@@ -45,4 +45,4 @@ const zoneSchema = new mongoose.Schema({
   collection: 'zonas_irrigacao'
 });
 
-export default mongoose.model('zonas_irrigacao', zoneSchema);
+export default mongoose.model('Zone', zoneSchema);

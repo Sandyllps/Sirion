@@ -2,6 +2,8 @@ import { Aedes } from 'aedes';
 import net from 'net';
 import http from 'http';
 import ws from 'websocket-stream';
+import Zone from './models/zone.model.js';
+import HistoricoUmidade from './models/historico_umidade.model.js';
 
 const broker = await Aedes.createBroker();
 
@@ -31,10 +33,45 @@ function iniciarBrokerMQTT(){
     console.log(`[NOVO CLIENTE] Cliente conectado: ${cliente.id}`);
     });
 
-    broker.on('publish', (pacote, cliente) => {
+    broker.on('publish', async (pacote, cliente) => {
     //ignora mensagems internas de sistema do aedes
     if (cliente && !pacote.topic.startsWith('$SYS')) {
-        console.log(`[PUBLICAÇÃO] Cliente ${cliente.id} publicou "${pacote.payload.toString()}" no tópico "${pacote.topic}"`);
+        const payloadTexto = pacote.payload.toString();
+
+        console.log(`[PUBLICAÇÃO] Cliente ${cliente.id} publicou "${payloadTexto}" no tópico "${pacote.topic}"`);
+
+        //quando o ESP publicar a umidade, vamos salvar no histórico da zona correspondente
+        if (pacote.topic === "sirion/jardim/umidade") {
+            try {
+                const dados = JSON.parse(payloadTexto);
+
+                const chaveESP = dados.chave_esp;
+                const umidade = Number(dados.umidade);
+
+                if (!chaveESP || Number.isNaN(umidade)) {
+                    console.log("[MQTT] Payload de umidade inválido. Esperado: { chave_esp, umidade }");
+                    return;
+                }
+
+                const zona = await Zone.findOne({ "esp32.chave_esp": chaveESP });
+
+                if (!zona) {
+                    console.log(`[MQTT] Nenhuma zona encontrada para a chave ESP: ${chaveESP}`);
+                    return;
+                }
+
+                const novoHistorico = await HistoricoUmidade.create({
+                    umidade: umidade,
+                    data_hora: new Date(),
+                    id_zona: zona._id,
+                });
+
+                console.log(`[MQTT] Histórico de umidade salvo com sucesso para a zona "${zona.nome}".`);
+                console.log("[MQTT] Registro salvo:", novoHistorico);
+            } catch (erro) {
+                console.error("[MQTT] Erro ao processar o histórico de umidade:", erro);
+            }
+        }
     }
     });
 }
