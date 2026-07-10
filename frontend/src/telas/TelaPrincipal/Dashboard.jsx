@@ -9,13 +9,14 @@ import PainelLateral from "../../componentes/ConteudoDashboard/ConteudoDashboard
 
 import "./Dashboard.css";
 
-function Dashboard(){
+function Dashboard({ aoSair }) {
 
     const [menuAberto, setMenuAberto] = useState(true);
     const [modalZonaAberto, setModalZonaAberto] = useState(false);
     const [modoModal, setModoModal] = useState("editar");
     const [dadosDashboard, setDadosDashboard] = useState(null);
     const [zonaSelecionada, setZonaSelecionada] = useState(null);
+    const idUsuario = localStorage.getItem("id_usuario");
 
     useEffect(() => {
         buscarDashboard();
@@ -44,35 +45,48 @@ function Dashboard(){
     }
 
     async function buscarDashboard() {
+        if (!idUsuario) {
+            console.error("Nenhum usuário autenticado.");
+            return;
+        }
 
         try {
-            const zonas = await buscarZonasPorUsuario(3);
+            const zonas = await buscarZonasPorUsuario(idUsuario);
 
             setDadosDashboard({
-                zonas: zonas
+                zonas
             });
 
             if (zonas.length > 0) {
-                setZonaSelecionada(zonas[0]);
+                setZonaSelecionada((zonaAtual) => {
+                    if (!zonaAtual) {
+                        return zonas[0];
+                    }
+
+                    return (
+                        zonas.find(
+                            (zona) =>
+                                zona._id === zonaAtual._id || zona.chave === zonaAtual.chave
+                        ) || zonas[0]
+                    );
+                });
             } else {
                 setZonaSelecionada(null);
             }
-
         } catch (erro) {
-
             console.error("Erro ao buscar zonas:", erro);
-
         }
-
     }
 
     return(
 
         <div className="dashboard">
             <Cabecalho
+                menuAberto={menuAberto}
                 aoClicarMenu={alterarMenu}
+                aoSair={aoSair}
             />
-
+            
             <div className="corpo-dashboard">
     
                 <div className={`sidebar ${menuAberto ? "aberta" : "fechada"}`}>
@@ -97,6 +111,7 @@ function Dashboard(){
                 zona={zonaSelecionada}
                 aberto={modalZonaAberto}
                 modo={modoModal}
+                idUsuario={idUsuario}
                 aoFechar={fecharModalZona}
                 aoAtualizar={atualizarDashboard}
             />

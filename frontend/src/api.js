@@ -1,23 +1,5 @@
 const API_URL = "http://localhost:8080";
 
-
-async function tratarResposta(resposta) {
-    const texto = await resposta.text();
-
-    let dados = null;
-
-    if (texto) {
-        dados = JSON.parse(texto);
-    }
-
-    if (!resposta.ok) {
-        throw new Error(dados?.mensagem || texto || "Erro na requisição.");
-    }
-
-    return dados;
-}
-
-
 export async function loginUsuario(email, senha) {
     const resposta = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
@@ -33,7 +15,7 @@ export async function loginUsuario(email, senha) {
     const dados = await resposta.json();
 
     if (!resposta.ok) {
-        throw new Error(dados?.mensagem || "Erro ao fazer login.");
+        throw new Error(dados?.response || "Erro ao fazer login.");
     }
 
     return dados;
@@ -55,7 +37,9 @@ export async function cadastrarUsuario(nome, email, senha) {
     const dados = await resposta.json();
 
     if (!resposta.ok) {
-        throw new Error(dados?.mensagem || "Erro ao cadastrar usuário.");
+        throw new Error(
+            dados?.resposta || "Não foi possível realizar o cadastro."
+        );
     }
 
     return dados;

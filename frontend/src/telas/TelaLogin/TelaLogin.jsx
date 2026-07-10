@@ -4,34 +4,32 @@ import Carrossel from "../../componentes/Carrossel/Carrossel";
 import BotoesLaterais from "../../componentes/BotoesLaterais/BotoesLaterais";
 import Login from "../../componentes/Login/Login";
 
-function TelaLogin() {
-
+function TelaLogin({
+    aoConcluirLogin,
+    aoAbrirLogin,
+    aoAbrirCadastro
+}) {
     return (
-
         <div className="pagina-login">
-
             <div className="container-login">
-
                 <div className="painel-login">
+                    <BotoesLaterais
+                        tela="login"
+                        aoAbrirLogin={aoAbrirLogin}
+                        aoAbrirCadastro={aoAbrirCadastro}
+                    />
 
-                    <BotoesLaterais tela="login"/>
-
-                    <Login />
-
+                    <Login
+                        aoConcluirLogin={aoConcluirLogin}
+                    />
                 </div>
 
                 <div className="imagem-lateral">
-
                     <Carrossel />
-
                 </div>
-
             </div>
-
         </div>
-
     );
-
 }
 
 export default TelaLogin;

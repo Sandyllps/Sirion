@@ -3,9 +3,8 @@ import { criarZona, editarZona } from "../../api";
 
 import "./editarZona.css";
 
-const ID_USUARIO = 3;
 
-function EditarZona({ aberto, modo, zona, aoFechar, aoAtualizar }) {
+function EditarZona({ aberto, modo, zona, idUsuario, aoFechar, aoAtualizar }) {
     const [nomeZona, setNomeZona] = useState("");
     const [chaveZona, setChaveZona] = useState(crypto.randomUUID());
     const [statusConexao, setStatusConexao] = useState("desconectado");
@@ -104,7 +103,7 @@ function EditarZona({ aberto, modo, zona, aoFechar, aoAtualizar }) {
             let respostaApi = null;
 
             if (modo === "nova") {
-                dadosZona.id_usuario = ID_USUARIO;
+                dadosZona.id_usuario = idUsuario;
                 dadosZona.esp32.chave_esp = chaveZona;
 
                 respostaApi = await criarZona(dadosZona);
@@ -118,7 +117,7 @@ function EditarZona({ aberto, modo, zona, aoFechar, aoAtualizar }) {
                     return;
                 }
 
-                respostaApi = await editarZona(idZona, ID_USUARIO, dadosZona);
+                respostaApi = await editarZona(idZona, idUsuario, dadosZona);
             }
 
             console.log("Zona salva com sucesso:", respostaApi);
