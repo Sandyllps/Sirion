@@ -26,7 +26,7 @@ conectarMongoDB();
 
 
 //INICIALIZAÇÃO DO SERVIDOR
-//Aquio servidor começa efetivamente a "ouvir" as chamadas que a página faz na porta definida"
+//Aquio servidor começa de fato a ouvir as chamadas que a página faz na porta definida
 const server = app.listen(port, function(){
     console.log("Servidor Sirion rodando com sucesso!");
     console.log("Escutando em: http://localhost:"+ port);

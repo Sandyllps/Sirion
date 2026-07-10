@@ -13,7 +13,7 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 
 //variáveis globais para guardar os pinos já convertidos
-int pinoSensorVazaoInt = -1;
+// int pinoSensorVazaoInt = -1;
 int pinoBombaInt = -1;
 
 const int MAX_SENSORES_UMIDADE = 10; // ajuste se quiser suportar mais sensores
@@ -33,17 +33,20 @@ void fazerRequisicaoGET();
 int converterLeituraUmidadeParaPorcentagem(int leituraBruta);
 bool pinoPodeSerOutput(int pino);
 int converterPinoParaInt(String pinoTexto);
-bool atualizarConsumo();
+// bool atualizarConsumo(uint32_t &pulsosLidos, float &mlCalculado);
 
-volatile uint32_t pulseCount = 0;
-float consumoML = 0.0;
+// volatile uint32_t pulseCount = 0;
+// float consumoML = 0.0;
 //aproximadamente 5880 pulsos por litro
-const float ML_POR_PULSO = 1000.0 / 5880.0;
+// const float ML_POR_PULSO = 1000.0 / 5880.0;
 
-void IRAM_ATTR flowISR()
-{
-    pulseCount++;
-}
+//quantidade mínima de pulsos em 5s para considerar que houve fluxo real
+// const uint32_t LIMIAR_PULSOS_FLUXO = 8;
+
+// void IRAM_ATTR flowISR()
+// {
+//     pulseCount++;
+// }
 
 //função para conectar ao wifi
 void setup_wifi() {
@@ -270,16 +273,26 @@ void loop() {
       client.publish("sirion/jardim/umidade", payload.c_str());
 
       //atualizarConsumo() apenas contabiliza os pulsos do sensor de vazão e soma no consumo total
-      bool houveFluxo = atualizarConsumo();
+      // uint32_t pulsosLidos = 0;
+      // float mlNestaJanela = 0.0;
+      // bool houveFluxo = atualizarConsumo(pulsosLidos, mlNestaJanela);
 
-      Serial.print("Consumo acumulado (mL): ");
-      Serial.println(consumoML);
+      // Serial.print("Pulsos do sensor de vazão nos últimos 5 segundos: ");
+      // Serial.println(pulsosLidos);
 
-      if (houveFluxo) {
-        Serial.println("Fluxo de água detectado pelo sensor de vazão.");
-      } else {
-        Serial.println("Nenhum pulso de vazão detectado nos últimos 5 segundos.");
-      }
+      // Serial.print("Consumo nesta janela (mL): ");
+      // Serial.println(mlNestaJanela);
+
+      // Serial.print("Consumo acumulado (mL): ");
+      // Serial.println(consumoML);
+
+      // if (bombaLigada == 0) {
+      //   Serial.println("Bomba desligada: pulsos de vazão foram ignorados.");
+      // } else if (houveFluxo) {
+      //   Serial.println("Fluxo de água detectado pelo sensor de vazão.");
+      // } else {
+      //   Serial.println("Pulsos insuficientes para considerar fluxo real de água.");
+      // }
 
       //aqui estamos usando a média d eumidade para saber se precisamos ligar/desligar a bomba
       if (pinoPodeSerOutput(pinoBombaInt)) {
@@ -378,23 +391,23 @@ void fazerRequisicaoGET() {
         Serial.println(pino);
       }
 
-      pinoSensorVazaoInt = converterPinoParaInt(String(pino_sensor_vazao));
+      // pinoSensorVazaoInt = converterPinoParaInt(String(pino_sensor_vazao));
 
-      if (pinoSensorVazaoInt < 0) {
-        Serial.println("Erro: pino do sensor de vazão inválido ou não utilizável.");
-      } else {
-        Serial.print("Pino do sensor de vazão convertido para inteiro: ");
-        Serial.println(pinoSensorVazaoInt);
+      // if (pinoSensorVazaoInt < 0) {
+      //   Serial.println("Erro: pino do sensor de vazão inválido ou não utilizável.");
+      // } else {
+      //   Serial.print("Pino do sensor de vazão convertido para inteiro: ");
+      //   Serial.println(pinoSensorVazaoInt);
 
-        pinMode(pinoSensorVazaoInt, INPUT_PULLUP);
+      //   pinMode(pinoSensorVazaoInt, INPUT_PULLUP);
 
-        detachInterrupt(digitalPinToInterrupt(pinoSensorVazaoInt));
-        attachInterrupt(
-            digitalPinToInterrupt(pinoSensorVazaoInt),
-            flowISR,
-            FALLING
-        );
-      }
+      //   detachInterrupt(digitalPinToInterrupt(pinoSensorVazaoInt));
+      //   attachInterrupt(
+      //       digitalPinToInterrupt(pinoSensorVazaoInt),
+      //       flowISR,
+      //       FALLING
+      //   );
+      // }
 
       pinoBombaInt = converterPinoParaInt(String(pino_bomba));
 
@@ -429,9 +442,9 @@ void fazerRequisicaoGET() {
       //o pino de vazão como entrada (input)
       //o pino da bomba como saída (output)
       //os pinos de umidade como entrada (input)
-      if (pinoSensorVazaoInt >= 0) {
-        Serial.println("Pino do sensor de vazão inicializado como INPUT_PULLUP.");
-      }
+      // if (pinoSensorVazaoInt >= 0) {
+      //   Serial.println("Pino do sensor de vazão inicializado como INPUT_PULLUP.");
+      // }
 
       if (pinoPodeSerOutput(pinoBombaInt)) {
         pinMode(pinoBombaInt, OUTPUT);
@@ -498,14 +511,28 @@ int converterLeituraUmidadeParaPorcentagem(int leituraBruta) {
   return porcentagem;
 }
 
-bool atualizarConsumo(){
-    noInterrupts();
-    uint32_t pulsos = pulseCount;
-    pulseCount = 0;
-    interrupts();
+// bool atualizarConsumo(uint32_t &pulsosLidos, float &mlCalculado){
+//     noInterrupts();
+//     uint32_t pulsos = pulseCount;
+//     pulseCount = 0;
+//     interrupts();
 
-    float ml = pulsos * ML_POR_PULSO;
-    consumoML += ml;
+//     pulsosLidos = pulsos;
+//     mlCalculado = 0.0;
 
-    return (pulsos > 0);
-}
+//     //se a bomba estiver desligada, ignoramos qualquer pulso espúrio
+//     if (bombaLigada == 0) {
+//         return false;
+//     }
+
+//     //se a quantidade de pulsos for muito pequena, tratamos como ruído
+//     if (pulsos < LIMIAR_PULSOS_FLUXO) {
+//         return false;
+//     }
+
+//     float ml = pulsos * ML_POR_PULSO;
+//     consumoML += ml;
+//     mlCalculado = ml;
+
+//     return true;
+// }
