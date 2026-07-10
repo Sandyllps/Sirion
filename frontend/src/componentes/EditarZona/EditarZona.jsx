@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { criarZona, editarZona } from "../../api";
+import { criarZona, editarZona, excluirZona } from "../../api";
 
 import "./editarZona.css";
 
-const ID_USUARIO = 3;
 
-function EditarZona({ aberto, modo, zona, aoFechar, aoAtualizar }) {
+function EditarZona({ aberto, modo, zona, idUsuario, aoFechar, aoAtualizar }) {
     const [nomeZona, setNomeZona] = useState("");
     const [chaveZona, setChaveZona] = useState(crypto.randomUUID());
     const [statusConexao, setStatusConexao] = useState("desconectado");
@@ -104,7 +103,7 @@ function EditarZona({ aberto, modo, zona, aoFechar, aoAtualizar }) {
             let respostaApi = null;
 
             if (modo === "nova") {
-                dadosZona.id_usuario = ID_USUARIO;
+                dadosZona.id_usuario = idUsuario;
                 dadosZona.esp32.chave_esp = chaveZona;
 
                 respostaApi = await criarZona(dadosZona);
@@ -118,7 +117,7 @@ function EditarZona({ aberto, modo, zona, aoFechar, aoAtualizar }) {
                     return;
                 }
 
-                respostaApi = await editarZona(idZona, ID_USUARIO, dadosZona);
+                respostaApi = await editarZona(idZona, idUsuario, dadosZona);
             }
 
             console.log("Zona salva com sucesso:", respostaApi);
@@ -132,6 +131,37 @@ function EditarZona({ aberto, modo, zona, aoFechar, aoAtualizar }) {
         } catch (erro) {
             console.error("Erro ao salvar zona:", erro);
             alert("Não foi possível salvar a zona. Veja o console.");
+        }
+    }
+
+    async function removerZona() {
+        const idZona = zona?._id || zona?.id;
+
+        if (!idZona) {
+            alert("Não foi possível excluir: ID da zona não encontrado.");
+            return;
+        }
+
+        const desejaExcluir = window.confirm(
+            `Deseja realmente excluir a zona "${zona.nome}"?`
+        );
+
+        if (!desejaExcluir) {
+            return;
+        }
+
+        try {
+            await excluirZona(idZona);
+
+            if (aoAtualizar) {
+                await aoAtualizar();
+            }
+
+            aoFechar();
+
+        } catch (erro) {
+            console.error("Erro ao excluir zona:", erro);
+            alert(erro.message);
         }
     }
 
@@ -244,6 +274,16 @@ function EditarZona({ aberto, modo, zona, aoFechar, aoAtualizar }) {
                 </div>
 
                 <div className="rodape-modal">
+                    {modo === "editar" && (
+                        <button
+                            type="button"
+                            className="botao-excluir"
+                            onClick={removerZona}
+                        >
+                            Excluir
+                        </button>
+                    )}
+
                     <button type="button" onClick={aoFechar}>
                         Cancelar
                     </button>

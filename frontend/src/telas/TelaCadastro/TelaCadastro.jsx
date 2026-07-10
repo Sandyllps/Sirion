@@ -4,34 +4,31 @@ import Carrossel from "../../componentes/Carrossel/Carrossel";
 import BotoesLaterais from "../../componentes/BotoesLaterais/BotoesLaterais";
 import Cadastro from "../../componentes/Cadastro/Cadastro";
 
-function TelaCadastro() {
-
+function TelaCadastro({
+    aoAbrirLogin,
+    aoAbrirCadastro
+}) {
     return (
-
         <div className="pagina-cadastro">
-
             <div className="container-cadastro">
-
                 <div className="imagem-lateral">
-
                     <Carrossel />
-
                 </div>
 
                 <div className="painel-cadastro">
+                    <BotoesLaterais
+                        tela="cadastro"
+                        aoAbrirLogin={aoAbrirLogin}
+                        aoAbrirCadastro={aoAbrirCadastro}
+                    />
 
-                    <BotoesLaterais tela="cadastro" />
-
-                    <Cadastro />
-
+                    <Cadastro
+                        aoCadastroConcluido={aoAbrirLogin}
+                    />
                 </div>
-
             </div>
-
         </div>
-
     );
-
 }
 
 export default TelaCadastro;
