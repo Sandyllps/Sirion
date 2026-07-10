@@ -112,6 +112,34 @@
 
 }
 
+.zona-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.nome-zona {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.botao-excluir-zona {
+    flex-shrink: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px 7px;
+    border-radius: 5px;
+}
+
+.botao-excluir-zona:hover {
+    background: rgba(180, 40, 40, 0.12);
+}
+
 
 @media(max-width:768px){
 

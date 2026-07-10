@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { buscarZonasPorUsuario } from "../../api";
+import { buscarZonasPorUsuario, excluirZona } from "../../api";
 
 import EditarZona from "../../componentes/EditarZona/EditarZona";
 import Cabecalho from "../../componentes/Cabecalho/Cabecalho";
@@ -42,6 +42,39 @@ function Dashboard({ aoSair }) {
 
     function atualizarDashboard() {
         buscarDashboard();
+    }
+
+    async function removerZona(zona) {
+        const idZona = zona?._id || zona?.id;
+
+        if (!idZona) {
+            alert("Não foi possível identificar a zona.");
+            return;
+        }
+
+        const desejaExcluir = window.confirm(
+            `Deseja realmente excluir a zona "${zona.nome}"?`
+        );
+
+        if (!desejaExcluir) {
+            return;
+        }
+
+        try {
+            await excluirZona(idZona);
+
+            if (
+                zonaSelecionada?._id === idZona ||
+                zonaSelecionada?.id === idZona
+            ) {
+                setZonaSelecionada(null);
+            }
+
+            await buscarDashboard();
+        } catch (erro) {
+            console.error("Erro ao excluir zona:", erro);
+            alert(erro.message);
+        }
     }
 
     async function buscarDashboard() {
@@ -95,6 +128,7 @@ function Dashboard({ aoSair }) {
                         zonaSelecionada={zonaSelecionada}
                         aoSelecionarZona={setZonaSelecionada}
                         aoNovaZona={abrirNovaZona}
+                        aoExcluirZona={removerZona}
                     />
                 </div>
 

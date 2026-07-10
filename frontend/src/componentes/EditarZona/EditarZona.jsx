@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { criarZona, editarZona } from "../../api";
+import { criarZona, editarZona, excluirZona } from "../../api";
 
 import "./editarZona.css";
 
@@ -134,6 +134,37 @@ function EditarZona({ aberto, modo, zona, idUsuario, aoFechar, aoAtualizar }) {
         }
     }
 
+    async function removerZona() {
+        const idZona = zona?._id || zona?.id;
+
+        if (!idZona) {
+            alert("Não foi possível excluir: ID da zona não encontrado.");
+            return;
+        }
+
+        const desejaExcluir = window.confirm(
+            `Deseja realmente excluir a zona "${zona.nome}"?`
+        );
+
+        if (!desejaExcluir) {
+            return;
+        }
+
+        try {
+            await excluirZona(idZona);
+
+            if (aoAtualizar) {
+                await aoAtualizar();
+            }
+
+            aoFechar();
+
+        } catch (erro) {
+            console.error("Erro ao excluir zona:", erro);
+            alert(erro.message);
+        }
+    }
+
     if (!aberto) {
         return null;
     }
@@ -243,6 +274,16 @@ function EditarZona({ aberto, modo, zona, idUsuario, aoFechar, aoAtualizar }) {
                 </div>
 
                 <div className="rodape-modal">
+                    {modo === "editar" && (
+                        <button
+                            type="button"
+                            className="botao-excluir"
+                            onClick={removerZona}
+                        >
+                            Excluir
+                        </button>
+                    )}
+
                     <button type="button" onClick={aoFechar}>
                         Cancelar
                     </button>

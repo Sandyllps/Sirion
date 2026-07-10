@@ -82,10 +82,25 @@ export async function excluirZona(idZona) {
         method: "DELETE"
     });
 
-    if (!resposta.ok) {
-        const dados = await resposta.json();
-        throw new Error(dados?.mensagem || "Erro ao excluir zona.");
+    const texto = await resposta.text();
+
+    let dados = null;
+
+    if (texto) {
+        try {
+            dados = JSON.parse(texto);
+        } catch {
+            dados = texto;
+        }
     }
 
-    return true;
+    if (!resposta.ok) {
+        throw new Error(
+            dados?.mensagem ||
+            dados?.resposta ||
+            "Não foi possível excluir a zona."
+        );
+    }
+
+    return dados;
 }
