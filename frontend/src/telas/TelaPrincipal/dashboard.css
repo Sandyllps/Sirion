@@ -1,4 +1,35 @@
+/*Estilos do dashboard*/
 .dashboard{
+
+    /*cores base, guaraddas em variáveis para facilitar o uso por todo o codigo*/
+    --bg-app:#0A121F;
+    --bg-header:#0D1626;
+    --bg-sidebar:#0D1626;
+    --bg-panel:#0A121F;
+    --bg-card:#121D31;
+    --bg-card-hover:#16233A;
+    --bg-input:#0F1A2C;
+
+    --border-subtle:rgba(255,255,255,.08);
+    --border-forte:rgba(255,255,255,.16);
+
+    /* texto*/
+    --texto-principal:#F2F6FB;
+    --texto-secundario:#9FB3C8;
+    --texto-fraco:#6B7F99;
+
+    /* sombrinhas/bordas finas*/
+    --accent-azul:#2FA8E0;
+    --accent-azul-forte:#1F87BA;
+    --accent-verde:#33D399;
+    --accent-verde-forte:#1FA97A;
+    --accent-ambar:#F5B942;
+    --accent-vermelho:#F0575C;
+    --accent-roxo:#8B7CF6;
+
+    --raio:12px;
+    --raio-sm:8px;
+    --sombra-card:0 8px 20px rgba(0,0,0,.35);
 
     width:100%;
     height:100vh;
@@ -8,7 +39,8 @@
 
     overflow:hidden;
 
-    background:#f4f4f4;
+    background:var(--bg-app);
+    color:var(--texto-principal);
 }
 
 
@@ -22,31 +54,28 @@
 }
 
 
-/* Sidebar */
+/*coluna lateral esquerad*/
 
 .sidebar{
 
-    width:190px;
-
+    width:220px;
     flex-shrink:0;
+    transition:width .25s ease, opacity .2s ease;
 
-    transition:width .25s ease;
-
-    background:#fff;
-
-    border-right:1px solid #cfcfcf;
-
+    background:var(--bg-sidebar);
+    border-right:1px solid var(--border-subtle);
     overflow:hidden;
 }
 
 .sidebar.fechada{
 
     width:0;
+    opacity:0;
 
 }
 
 
-/* Dashboard */
+/*dashboard*/
 
 .dashboard-container{
 
@@ -56,22 +85,38 @@
 
     overflow:auto;
 
-    padding:14px 18px;
+    padding:20px 24px;
 
     transition:.25s;
 
-    background:#f4f4f4;
+    background:var(--bg-panel);
+}
+
+.dashboard-container::-webkit-scrollbar{
+    width:10px;
+}
+
+.dashboard-container::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+.dashboard-container::-webkit-scrollbar-thumb{
+    background:var(--border-forte);
+    border-radius:10px;
 }
 
 
-/* Responsivo */
-
+/*responsividade*/
 @media(max-width:900px){
 
     .sidebar{
 
-        width:170px;
+        width:190px;
 
+    }
+
+    .dashboard-container{
+        padding:16px;
     }
 
 }

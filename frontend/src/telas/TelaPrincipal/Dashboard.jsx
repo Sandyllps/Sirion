@@ -7,7 +7,7 @@ import MenuZonas from "../../componentes/MenuZonas/MenuZonas";
 import PainelLateral from "../../componentes/ConteudoDashboard/ConteudoDashboard";
 
 
-import "./Dashboard.css";
+import "./dashboard.css";
 
 function Dashboard({ aoSair }) {
 

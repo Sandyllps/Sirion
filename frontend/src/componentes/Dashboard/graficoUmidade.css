@@ -4,11 +4,13 @@
 
     height:100%;
 
-    background:#172540;
+    background:var(--bg-card);
 
-    border-radius:10px;
+    border:1px solid var(--border-subtle);
 
-    padding:16px;
+    border-radius:var(--raio);
+
+    padding:18px;
 
     display:flex;
 
@@ -16,8 +18,7 @@
 
     box-sizing:border-box;
 
-    box-shadow:
-        0 3px 8px rgba(0,0,0,.18);
+    box-shadow:var(--sombra-card);
 
 }
 
@@ -25,11 +26,13 @@
 
     margin:0 0 14px;
 
-    font-size:13px;
+    font-size:12px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
 
-    color:#DCE7F2;
+    color:var(--texto-secundario);
 
-    font-weight:600;
+    font-weight:700;
 
 }
 
@@ -41,20 +44,20 @@
 
 .recharts-cartesian-grid line{
 
-    stroke:#2E4568;
+    stroke:var(--border-subtle);
 
 }
 
 .recharts-x-axis line,
 .recharts-y-axis line{
 
-    stroke:#46648C;
+    stroke:var(--border-forte);
 
 }
 
 .recharts-cartesian-axis-tick-value{
 
-    fill:#A9BDD6;
+    fill:var(--texto-fraco);
 
     font-size:11px;
 
@@ -64,4 +67,21 @@
 
     outline:none;
 
+}
+
+.recharts-default-tooltip{
+    background:var(--bg-input) !important;
+    border:1px solid var(--border-forte) !important;
+    border-radius:8px !important;
+    color:var(--texto-principal) !important;
+}
+
+.recharts-line-curve{
+    stroke:var(--accent-azul);
+    stroke-width:2.5;
+}
+
+.recharts-dot{
+    fill:var(--accent-azul);
+    stroke:var(--bg-card);
 }

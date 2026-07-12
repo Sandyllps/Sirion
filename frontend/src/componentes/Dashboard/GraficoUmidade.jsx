@@ -47,6 +47,14 @@ function GraficoUmidade({ dados }) {
 
                         dataKey="umidade"
 
+                        stroke="#2FA8E0"
+
+                        strokeWidth={2.5}
+
+                        dot={{ r: 3, fill: "#2FA8E0", stroke: "#121D31" }}
+
+                        activeDot={{ r: 5 }}
+
                     />
 
                 </LineChart>

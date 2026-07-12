@@ -13,9 +13,12 @@ function CardModoIrrigacao() {
 
     return (
 
-        <section className="cartao-dashboard">
+        <section className="cartao-dashboard card-roxo">
 
-            <h3>Modo de Irrigação</h3>
+            <div className="cartao-cabecalho">
+                <span className="cartao-icone">🎛️</span>
+                <h3>Modo de Irrigação</h3>
+            </div>
 
             <div className="modo-container">
 

@@ -1,7 +1,4 @@
-/* ==========================================
-   MENU LATERAL
-========================================== */
-
+/*mwnu lateral */
 .menu-zonas{
 
     width:100%;
@@ -10,36 +7,32 @@
     display:flex;
     flex-direction:column;
 
-    background:#ffffff;
+    background:var(--bg-sidebar);
 
-    padding:18px 14px;
+    padding:20px 16px;
 
     box-sizing:border-box;
 }
 
 
-/* ==========================================
-   TÍTULO
-========================================== */
-
+/*título*/
 .menu-zonas h2{
 
-    margin:0 0 18px 0;
+    margin:0 0 16px 4px;
 
-    font-size:15px;
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
 
     font-weight:700;
 
-    color:#2b2b2b;
+    color:var(--texto-fraco);
 
     text-align:left;
 }
 
 
-/* ==========================================
-   LISTA
-========================================== */
-
+/*lista*/
 .menu-zonas ul{
 
     list-style:none;
@@ -49,60 +42,72 @@
     padding:0;
 
     flex:1;
+
+    overflow-y:auto;
 }
 
 
-/* ==========================================
-   ITEM
-========================================== */
-
-.menu-zonas li{
+/*zona*/
+.zona-item{
 
     cursor:pointer;
 
-    padding:10px 12px;
+    padding:11px 12px;
 
-    border-radius:8px;
+    border-radius:var(--raio-sm);
 
     margin-bottom:6px;
 
     font-size:14px;
 
-    color:#404040;
+    color:var(--texto-secundario);
+
+    border:1px solid transparent;
 
     transition:.2s;
 }
 
-.menu-zonas li:hover{
+.zona-item:hover{
 
-    background:#f3f3f3;
+    background:var(--bg-card);
+    color:var(--texto-principal);
 
 }
 
-.zona-selecionada{
+.zona-item.selecionada{
 
-    font-weight:700;
+    font-weight:600;
 
-    color:#111111;
+    color:var(--texto-principal);
 
-    background:#ececec;
+    background:var(--bg-card);
+
+    border-color:var(--accent-azul);
+
+    box-shadow:inset 3px 0 0 var(--accent-azul);
 
 }
 
 
 .botao-nova-zona{
     width:100%;
-    height:42px;
-    border:2px solid #1f1f1f;
-    background:#ffffff;
-    border-radius:10px;
-    font-size:15px;
+    height:44px;
+    border:1px dashed var(--border-forte);
+    background:transparent;
+    color:var(--texto-secundario);
+    border-radius:var(--raio-sm);
+    font-size:14px;
     font-weight:600;
+    cursor:pointer;
+    transition:.2s;
+    margin-top:6px;
 }
 
 .botao-nova-zona:hover{
 
-    background:#f4f4f4;
+    background:var(--bg-card);
+    border-color:var(--accent-azul);
+    color:var(--accent-azul);
 
 }
 
@@ -130,14 +135,17 @@
     flex-shrink: 0;
     border: none;
     background: transparent;
+    color: var(--texto-fraco);
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
     padding: 4px 7px;
     border-radius: 5px;
+    transition:.2s;
 }
 
 .botao-excluir-zona:hover {
-    background: rgba(180, 40, 40, 0.12);
+    background: rgba(240, 87, 92, .15);
+    color: var(--accent-vermelho);
 }
 
 

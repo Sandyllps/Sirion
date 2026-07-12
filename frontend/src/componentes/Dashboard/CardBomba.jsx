@@ -6,15 +6,24 @@ function CardBomba() {
 
     return (
 
-        <section className="cartao-dashboard">
+        <section className={`cartao-dashboard ${bombaLigada ? "card-verde" : "card-vermelho"}`}>
 
-            <h3>Estado da Bomba</h3>
+            <div className="cartao-cabecalho">
+                <span className="cartao-icone">⚡</span>
+                <h3>Estado da Bomba</h3>
+            </div>
 
-            <h2>
+            <div className="status-linha">
 
-                {bombaLigada ? "Ligada" : "Desligada"}
+                <span className={`status-ponto ${bombaLigada ? "ligado" : "desligado"}`} />
 
-            </h2>
+                <h2>
+
+                    {bombaLigada ? "Ligada" : "Desligada"}
+
+                </h2>
+
+            </div>
 
             <p>
 

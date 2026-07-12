@@ -6,7 +6,12 @@ function CardUmidade() {
 
     return (
 
-        <section className="cartao-dashboard">
+        <section className="cartao-dashboard card-azul">
+
+            <div className="cartao-cabecalho">
+                <span className="cartao-icone">💧</span>
+                <h3>Umidade do Solo</h3>
+            </div>
 
             <div className="linha-umidade">
 

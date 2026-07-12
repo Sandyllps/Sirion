@@ -1,18 +1,17 @@
-/* ===================================================
-   CARD PADRÃO
-=================================================== */
-
+/*card base de estilo: os cards de umidade, da boma, etc seguirão esse padrão de estilos*/
 .cartao-dashboard{
 
     width:100%;
 
-    min-height:82px;
+    min-height:110px;
 
-    background:#16253D;
+    background:var(--bg-card);
 
-    border-radius:8px;
+    border:1px solid var(--border-subtle);
 
-    padding:12px 16px;
+    border-radius:var(--raio);
+
+    padding:16px 18px;
 
     box-sizing:border-box;
 
@@ -22,44 +21,65 @@
 
     justify-content:space-between;
 
-    box-shadow:
-        0 3px 8px rgba(0,0,0,.18);
+    box-shadow:var(--sombra-card);
 
+    border-top:3px solid var(--accent-azul);
+
+    transition:transform .2s, border-color .2s;
+}
+
+.cartao-dashboard:hover{
+    transform:translateY(-2px);
 }
 
 
-/* ===================================================
-   TÍTULO
-=================================================== */
+/*cabeçalho do card*/
+.cartao-cabecalho{
 
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.cartao-icone{
+    font-size:14px;
+    line-height:1;
+}
+
+.cartao-cabecalho .selo{
+    margin-left:auto;
+}
+
+
+/*título*/
 .cartao-dashboard h3{
 
     margin:0;
 
     font-size:11px;
 
-    font-weight:500;
+    font-weight:600;
 
-    color:#9FB3C8;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+
+    color:var(--texto-secundario);
 
     line-height:1;
 
 }
 
 
-/* ===================================================
-   VALORES
-=================================================== */
-
+/*valores*/
 .cartao-dashboard h1{
 
     margin:0;
 
-    font-size:34px;
+    font-size:32px;
 
     font-weight:700;
 
-    color:white;
+    color:var(--texto-principal);
 
     line-height:1;
 
@@ -69,30 +89,25 @@
 
     margin:0;
 
-    font-size:28px;
+    font-size:24px;
 
     font-weight:700;
 
-    color:white;
+    color:var(--texto-principal);
 
     line-height:1;
 
 }
 
 
-/* ===================================================
-   TEXTO
-=================================================== */
-
+/*texto*/
 .cartao-dashboard p{
 
     margin:0;
 
     font-size:12px;
 
-    color:#E6EEF7;
-
-    opacity:.9;
+    color:var(--texto-secundario);
 
 }
 
@@ -103,30 +118,30 @@
 
     font-size:11px;
 
-    color:#D3DEE9;
+    color:var(--texto-fraco);
 
 }
 
 
-/* ===================================================
-   BOTÃO MODO
-=================================================== */
-
+/*botão modo automatico/manual*/
 .botao-modo{
 
     margin-top:8px;
 
     align-self:flex-start;
 
-    padding:4px 12px;
+    padding:6px 14px;
 
-    background:#ffffff;
+    background:transparent;
 
-    border:none;
+    border:1px solid var(--border-forte);
 
-    border-radius:5px;
+    color:var(--texto-principal);
+
+    border-radius:999px;
 
     font-size:11px;
+    font-weight:600;
 
     cursor:pointer;
 
@@ -136,49 +151,95 @@
 
 .botao-modo:hover{
 
-    background:#f0f0f0;
+    background:var(--accent-azul);
+    border-color:var(--accent-azul);
+    color:#fff;
 
 }
 
 
-/* ===================================================
-   VARIAÇÕES
-=================================================== */
+/*variações de cor*/
+.card-azul{
+    border-top-color:var(--accent-azul);
+}
 
 .card-verde{
 
-    background:#16614C;
+    border-top-color:var(--accent-verde);
 
 }
 
-.card-marrom{
+.card-ambar{
 
-    background:#45372B;
-
-}
-
-.card-azul-claro{
-
-    background:#1A6A97;
+    border-top-color:var(--accent-ambar);
 
 }
 
+.card-vermelho{
 
-/* ===================================================
-   RESPONSIVO
-=================================================== */
+    border-top-color:var(--accent-vermelho);
 
+}
+
+.card-roxo{
+    border-top-color:var(--accent-roxo);
+}
+
+
+/*status (bolinha + texto, ex: bomba ligada/desligada)*/
+.status-linha{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.status-ponto{
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:var(--texto-fraco);
+    flex-shrink:0;
+}
+
+.status-ponto.ligado{
+    background:var(--accent-verde);
+    box-shadow:0 0 8px var(--accent-verde);
+}
+
+.status-ponto.desligado{
+    background:var(--texto-fraco);
+}
+
+
+/*selo (ex: quantidade de alertas)*/
+
+.selo{
+    font-size:11px;
+    font-weight:700;
+    padding:2px 9px;
+    border-radius:999px;
+    background:rgba(240,87,92,.15);
+    color:var(--accent-vermelho);
+}
+
+.selo.selo-neutro{
+    background:rgba(159,179,200,.15);
+    color:var(--texto-secundario);
+}
+
+
+/*responsividade*/
 @media(max-width:1200px){
 
     .cartao-dashboard h1{
 
-        font-size:30px;
+        font-size:28px;
 
     }
 
     .cartao-dashboard h2{
 
-        font-size:24px;
+        font-size:22px;
 
     }
 
@@ -188,9 +249,9 @@
 
     .cartao-dashboard{
 
-        min-height:76px;
+        min-height:96px;
 
-        padding:12px;
+        padding:14px;
 
     }
 
@@ -205,14 +266,6 @@
     align-items:center;
 
     margin-top:10px;
-
-}
-
-.botao-modo{
-
-    height:32px;
-
-    white-space:nowrap;
 
 }
 
@@ -240,35 +293,42 @@
 
     font-size:10px;
 
-    color:#9FB3C8;
+    color:var(--texto-fraco);
 
 }
 
 .faixa-ideal strong{
 
-    color:white;
+    color:var(--texto-principal);
 
     font-size:15px;
 
 }
 
-.modo-irrigacao{
 
+/*loista de alertas*/
+
+.lista-alertas{
+    list-style:none;
+    margin:8px 0 0;
+    padding:0;
     display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    margin-top:10px;
-
+    flex-direction:column;
+    gap:8px;
+    overflow-y:auto;
 }
 
-.botao-modo{
-
-    height:32px;
-
-    white-space:nowrap;
-
+.item-alerta{
+    font-size:12px;
+    color:var(--texto-secundario);
+    background:var(--bg-input);
+    border-left:3px solid var(--accent-ambar);
+    border-radius:6px;
+    padding:8px 10px;
+    line-height:1.4;
 }
 
+.item-alerta strong{
+    color:var(--texto-principal);
+    font-size:12px;
+}

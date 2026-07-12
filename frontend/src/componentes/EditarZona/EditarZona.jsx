@@ -174,102 +174,148 @@ function EditarZona({ aberto, modo, zona, idUsuario, aoFechar, aoAtualizar }) {
             <div className="modal-editar-zona">
                 <div className="cabecalho-modal">
                     <h2>{modo === "editar" ? "Editar Zona" : "Nova Zona"}</h2>
+
+                    <button
+                        type="button"
+                        className="botao-fechar-modal"
+                        onClick={aoFechar}
+                        aria-label="Fechar"
+                    >
+                        ✕
+                    </button>
                 </div>
 
                 <div className="conteudo-modal">
-                    <label>Nome da Zona</label>
-                    <input
-                        type="text"
-                        value={nomeZona}
-                        onChange={(evento) => setNomeZona(evento.target.value)}
-                    />
 
-                    <label>Chave da Zona</label>
-                    <div className="linha">
-                        <input type="text" value={chaveZona} readOnly />
-
-                        <button type="button" onClick={copiarChave}>
-                            Copiar
-                        </button>
-
-                        <button type="button" onClick={gerarNovaChave}>
-                            Nova
-                        </button>
+                    <div className="campo">
+                        <label>Nome da Zona</label>
+                        <input
+                            className="input-zona"
+                            type="text"
+                            placeholder="Ex: Horta, Jardim, Estufa 1"
+                            value={nomeZona}
+                            onChange={(evento) => setNomeZona(evento.target.value)}
+                        />
                     </div>
 
-                    <button
-                        className="botao-conexao"
-                        type="button"
-                        onClick={testarConexao}
-                    >
-                        Testar conexão
-                    </button>
+                    <div className="campo">
+                        <label>Chave da Zona</label>
+                        <div className="linha">
+                            <input className="input-zona" type="text" value={chaveZona} readOnly />
 
-                    <p className="status-conexao">
-                        Status:
-                        {statusConexao === "desconectado"
-                            ? " 🔴 Desconectado"
-                            : statusConexao === "testando"
-                            ? " 🟡 Testando..."
-                            : " 🟢 Conectado"}
-                    </p>
+                            <button type="button" className="btn-secundario" onClick={copiarChave}>
+                                Copiar
+                            </button>
 
-                    <label>Pino da Bomba</label>
-                    <input
-                        type="text"
-                        value={pinoBomba}
-                        onChange={(evento) => setPinoBomba(evento.target.value)}
-                    />
-
-                    <label>Pino do Sensor de Vazão</label>
-                    <input
-                        type="text"
-                        value={pinoSensorVazao}
-                        onChange={(evento) => setPinoSensorVazao(evento.target.value)}
-                    />
-
-                    <h3>Sensores de Umidade</h3>
-
-                    {sensores.map((sensor, indice) => (
-                        <div className="sensor" key={sensor.id}>
-                            <p>Sensor {indice + 1}</p>
-
-                            <input
-                                type="text"
-                                value={sensor.pino}
-                                onChange={(evento) =>
-                                    alterarPinoSensor(sensor.id, evento.target.value)
-                                }
-                            />
-
-                            <button type="button" onClick={() => removerSensor(sensor.id)}>
-                                ✕
+                            <button type="button" className="btn-secundario" onClick={gerarNovaChave}>
+                                Nova
                             </button>
                         </div>
-                    ))}
-
-                    <button type="button" onClick={adicionarSensor}>
-                        + Adicionar Sensor
-                    </button>
-
-                    <label>Umidade mínima para ativação</label>
-                    <div className="linha">
-                        <input
-                            type="number"
-                            value={umidadeMinima}
-                            onChange={(evento) => setUmidadeMinima(evento.target.value)}
-                        />
-                        <span>%</span>
                     </div>
 
-                    <label>Umidade máxima para desligamento</label>
-                    <div className="linha">
-                        <input
-                            type="number"
-                            value={umidadeMaxima}
-                            onChange={(evento) => setUmidadeMaxima(evento.target.value)}
-                        />
-                        <span>%</span>
+                    <div className="campo campo-conexao">
+                        <button
+                            className="botao-conexao"
+                            type="button"
+                            onClick={testarConexao}
+                        >
+                            Testar conexão
+                        </button>
+
+                        <p className={`status-conexao status-${statusConexao}`}>
+                            {statusConexao === "desconectado"
+                                ? "🔴 Desconectado"
+                                : statusConexao === "testando"
+                                ? "🟡 Testando..."
+                                : "🟢 Conectado"}
+                        </p>
+                    </div>
+
+                    <div className="linha-dupla">
+                        <div className="campo">
+                            <label>Pino da Bomba</label>
+                            <input
+                                className="input-zona"
+                                type="text"
+                                value={pinoBomba}
+                                onChange={(evento) => setPinoBomba(evento.target.value)}
+                            />
+                        </div>
+
+                        <div className="campo">
+                            <label>Pino do Sensor de Vazão</label>
+                            <input
+                                className="input-zona"
+                                type="text"
+                                value={pinoSensorVazao}
+                                onChange={(evento) => setPinoSensorVazao(evento.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="secao-sensores">
+                        <h3 className="titulo-secao">Sensores de Umidade</h3>
+
+                        {sensores.length === 0 && (
+                            <p className="texto-vazio">Nenhum sensor adicionado ainda.</p>
+                        )}
+
+                        {sensores.map((sensor, indice) => (
+                            <div className="sensor" key={sensor.id}>
+                                <span className="sensor-rotulo">Sensor {indice + 1}</span>
+
+                                <input
+                                    className="input-zona"
+                                    type="text"
+                                    placeholder="Pino"
+                                    value={sensor.pino}
+                                    onChange={(evento) =>
+                                        alterarPinoSensor(sensor.id, evento.target.value)
+                                    }
+                                />
+
+                                <button
+                                    type="button"
+                                    className="botao-remover-sensor"
+                                    onClick={() => removerSensor(sensor.id)}
+                                    aria-label={`Remover sensor ${indice + 1}`}
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        ))}
+
+                        <button type="button" className="btn-secundario btn-adicionar-sensor" onClick={adicionarSensor}>
+                            + Adicionar Sensor
+                        </button>
+                    </div>
+
+                    <div className="linha-dupla">
+                        <div className="campo">
+                            <label>Umidade mínima para ativação</label>
+                            <div className="linha campo-percentual">
+                                <input
+                                    className="input-zona"
+                                    type="number"
+                                    value={umidadeMinima}
+                                    onChange={(evento) => setUmidadeMinima(evento.target.value)}
+                                />
+                                <span className="sufixo-percentual">%</span>
+                            </div>
+                        </div>
+
+                        <div className="campo">
+                            <label>Umidade máxima para desligamento</label>
+                            <div className="linha campo-percentual">
+                                <input
+                                    className="input-zona"
+                                    type="number"
+                                    value={umidadeMaxima}
+                                    onChange={(evento) => setUmidadeMaxima(evento.target.value)}
+                                />
+                                <span className="sufixo-percentual">%</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -277,20 +323,22 @@ function EditarZona({ aberto, modo, zona, idUsuario, aoFechar, aoAtualizar }) {
                     {modo === "editar" && (
                         <button
                             type="button"
-                            className="botao-excluir"
+                            className="btn-perigo"
                             onClick={removerZona}
                         >
                             Excluir
                         </button>
                     )}
 
-                    <button type="button" onClick={aoFechar}>
-                        Cancelar
-                    </button>
+                    <div className="rodape-modal-direita">
+                        <button type="button" className="btn-secundario" onClick={aoFechar}>
+                            Cancelar
+                        </button>
 
-                    <button type="button" onClick={salvarZona}>
-                        Salvar
-                    </button>
+                        <button type="button" className="btn-primario" onClick={salvarZona}>
+                            Salvar
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>

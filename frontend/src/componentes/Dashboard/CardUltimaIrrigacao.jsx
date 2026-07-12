@@ -5,11 +5,14 @@ function CardUltimaIrrigacao({ ultimaIrrigacao }) {
 
     return (
 
-        <section className="cartao-dashboard">
+        <section className="cartao-dashboard card-ambar">
 
-            <h3>Última Irrigação</h3>
+            <div className="cartao-cabecalho">
+                <span className="cartao-icone">🕒</span>
+                <h3>Última Irrigação</h3>
+            </div>
 
-            <h2>{ultimaIrrigacao}</h2>
+            <h2>{ultimaIrrigacao || "—"}</h2>
 
             <p>Último acionamento da bomba</p>
 

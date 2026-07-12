@@ -4,9 +4,16 @@ function PainelAlertas({ alertas }) {
 
     return (
 
-        <section className="cartao-dashboard">
+        <section className={`cartao-dashboard ${alertas.length > 0 ? "card-vermelho" : "card-verde"}`}>
 
-            <h3>Alertas do Sistema</h3>
+            <div className="cartao-cabecalho">
+                <span className="cartao-icone">⚠️</span>
+                <h3>Alertas do Sistema</h3>
+
+                <span className={`selo ${alertas.length === 0 ? "selo-neutro" : ""}`}>
+                    {alertas.length}
+                </span>
+            </div>
 
             {
                 alertas.length === 0 ? (

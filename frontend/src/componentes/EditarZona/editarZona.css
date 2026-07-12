@@ -1,36 +1,86 @@
 .fundo-modal{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.35);
+    background:rgba(4,8,16,.6);
+    backdrop-filter:blur(2px);
     display:flex;
     justify-content:center;
     align-items:center;
     z-index:999;
+    padding:20px;
 }
 
 .modal-editar-zona{
-    width:520px;
-    max-height:85vh;
-    background:white;
-    border-radius:10px;
+    width:540px;
+    max-width:100%;
+    max-height:88vh;
+    background:var(--bg-card, #121D31);
+    color:var(--texto-principal, #F2F6FB);
+    border:1px solid var(--border-subtle, rgba(255,255,255,.08));
+    border-radius:var(--raio, 14px);
     display:flex;
     flex-direction:column;
+    box-shadow:0 20px 50px rgba(0,0,0,.5);
 }
 
 .cabecalho-modal{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    padding:20px;
-    border-bottom:1px solid #ddd;
+    padding:20px 22px;
+    border-bottom:1px solid var(--border-subtle, rgba(255,255,255,.08));
+}
+
+.cabecalho-modal h2{
+    margin:0;
+    font-size:18px;
+    font-weight:700;
+}
+
+.botao-fechar-modal{
+    width:32px;
+    height:32px;
+    border:none;
+    background:transparent;
+    color:var(--texto-secundario, #9FB3C8);
+    border-radius:8px;
+    cursor:pointer;
+    font-size:14px;
+    transition:.2s;
+}
+
+.botao-fechar-modal:hover{
+    background:rgba(255,255,255,.08);
+    color:var(--texto-principal, #F2F6FB);
 }
 
 .conteudo-modal{
     display:flex;
     flex-direction:column;
-    gap:12px;
-    padding:20px;
+    gap:16px;
+    padding:22px;
     overflow-y:auto;
+}
+
+/* campos*/
+.campo{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.campo label{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--texto-secundario, #9FB3C8);
+}
+
+.linha-dupla{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
 }
 
 .linha{
@@ -38,19 +88,202 @@
     gap:10px;
 }
 
+.input-zona{
+    width:100%;
+    height:40px;
+    padding:0 12px;
+    background:var(--bg-input, #0F1A2C);
+    border:1px solid var(--border-subtle, rgba(255,255,255,.08));
+    border-radius:8px;
+    color:var(--texto-principal, #F2F6FB);
+    font-size:14px;
+    box-sizing:border-box;
+    transition:.2s;
+}
+
+.input-zona::placeholder{
+    color:var(--texto-fraco, #6B7F99);
+}
+
+.input-zona:focus{
+    outline:none;
+    border-color:var(--accent-azul, #2FA8E0);
+    box-shadow:0 0 0 3px rgba(47,168,224,.18);
+}
+
+.input-zona[readonly]{
+    color:var(--texto-secundario, #9FB3C8);
+}
+
+.campo-percentual{
+    align-items:center;
+}
+
+.sufixo-percentual{
+    color:var(--texto-secundario, #9FB3C8);
+    font-size:13px;
+}
+
+/*conexãp*/
+.campo-conexao{
+    flex-direction:row;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--bg-input, #0F1A2C);
+    border:1px solid var(--border-subtle, rgba(255,255,255,.08));
+    border-radius:10px;
+    padding:12px 14px;
+}
+
+.botao-conexao{
+    height:36px;
+    padding:0 16px;
+    border:1px solid var(--border-forte, rgba(255,255,255,.16));
+    background:transparent;
+    color:var(--texto-principal, #F2F6FB);
+    border-radius:8px;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.botao-conexao:hover{
+    background:var(--accent-azul, #2FA8E0);
+    border-color:var(--accent-azul, #2FA8E0);
+    color:#fff;
+}
+
+.status-conexao{
+    margin:0;
+    font-size:13px;
+    font-weight:600;
+    color:var(--texto-secundario, #9FB3C8);
+}
+
+/*sensores*/
+.secao-sensores{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    padding-top:6px;
+    border-top:1px solid var(--border-subtle, rgba(255,255,255,.08));
+}
+
+.titulo-secao{
+    margin:6px 0 0;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--texto-secundario, #9FB3C8);
+}
+
+.texto-vazio{
+    margin:0;
+    font-size:13px;
+    color:var(--texto-fraco, #6B7F99);
+}
+
 .sensor{
     display:flex;
+    align-items:center;
     gap:10px;
 }
 
+.sensor-rotulo{
+    width:78px;
+    flex-shrink:0;
+    font-size:13px;
+    color:var(--texto-secundario, #9FB3C8);
+}
+
+.botao-remover-sensor{
+    flex-shrink:0;
+    width:32px;
+    height:32px;
+    border:1px solid var(--border-subtle, rgba(255,255,255,.08));
+    background:transparent;
+    color:var(--texto-secundario, #9FB3C8);
+    border-radius:8px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.botao-remover-sensor:hover{
+    background:rgba(240,87,92,.15);
+    border-color:var(--accent-vermelho, #F0575C);
+    color:var(--accent-vermelho, #F0575C);
+}
+
+.btn-adicionar-sensor{
+    align-self:flex-start;
+}
+
+/*botões*/
+.btn-primario,
+.btn-secundario,
+.btn-perigo{
+    height:40px;
+    padding:0 18px;
+    border-radius:8px;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.2s;
+    white-space:nowrap;
+}
+
+.btn-primario{
+    border:1px solid var(--accent-azul, #2FA8E0);
+    background:var(--accent-azul, #2FA8E0);
+    color:#fff;
+}
+
+.btn-primario:hover{
+    background:var(--accent-azul-forte, #1F87BA);
+    border-color:var(--accent-azul-forte, #1F87BA);
+}
+
+.btn-secundario{
+    border:1px solid var(--border-forte, rgba(255,255,255,.16));
+    background:transparent;
+    color:var(--texto-principal, #F2F6FB);
+}
+
+.btn-secundario:hover{
+    background:rgba(255,255,255,.06);
+}
+
+.btn-perigo{
+    border:1px solid var(--accent-vermelho, #F0575C);
+    background:transparent;
+    color:var(--accent-vermelho, #F0575C);
+}
+
+.btn-perigo:hover{
+    background:var(--accent-vermelho, #F0575C);
+    color:#fff;
+}
+
+/*rodape*/
 .rodape-modal{
     display:flex;
-    justify-content:flex-end;
-
+    justify-content:space-between;
+    align-items:center;
     gap:10px;
+    padding:18px 22px;
+    border-top:1px solid var(--border-subtle, rgba(255,255,255,.08));
+}
 
-    padding:20px;
+.rodape-modal-direita{
+    display:flex;
+    gap:10px;
+    margin-left:auto;
+}
 
-    border-top:1px solid #ddd;
-
+@media(max-width:600px){
+    .linha-dupla{
+        grid-template-columns:1fr;
+    }
 }
