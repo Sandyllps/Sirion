@@ -1,7 +1,7 @@
 const API_URL = "http://localhost:8080";
 
 
-// Função para tratar as respostas da API. Não havia sido criada
+//função para tratar as respostas da API. Não havia sido criada
 async function tratarResposta(resposta) {
     let dados = null;
     const texto = await resposta.text();
