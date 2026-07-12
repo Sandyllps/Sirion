@@ -1,5 +1,32 @@
 const API_URL = "http://localhost:8080";
 
+
+// Função para tratar as respostas da API. Não havia sido criada
+async function tratarResposta(resposta) {
+    let dados = null;
+    const texto = await resposta.text();
+
+    if (texto) {
+        try {
+            dados = JSON.parse(texto);
+        } catch {
+            dados = texto;
+        }
+    }
+
+    if (!resposta.ok) {
+        throw new Error(
+            dados?.mensagem || 
+            dados?.resposta || 
+            dados?.response || 
+            "Ocorreu um erro na requisição."
+        );
+    }
+
+    return dados;
+}
+
+
 export async function loginUsuario(email, senha) {
     const resposta = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
