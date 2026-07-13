@@ -37,7 +37,9 @@ function PainelLateral({ zona, dadosZona, aoEditarZona }) {
                     umidadeMaxima={zona?.max_umidade}
                 />
 
-                <CardBomba />
+                <CardBomba
+                    bombaLigada={dadosZona?.bomba_ativa}
+                />
 
                 <CardUltimaIrrigacao
                     ultimaIrrigacao={zona?.ultimaIrrigacao}
