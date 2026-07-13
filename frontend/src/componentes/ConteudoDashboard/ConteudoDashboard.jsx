@@ -6,7 +6,7 @@ import CardUltimaIrrigacao from "../Dashboard/CardUltimaIrrigacao";
 import PainelAlertas from "../Dashboard/CardAlertas";
 import GraficoUmidade from "../Dashboard/GraficoUmidade";
 
-function PainelLateral({ zona, aoEditarZona }) {
+function PainelLateral({ zona, dadosZona, aoEditarZona }) {
 
 
     return (
@@ -31,7 +31,11 @@ function PainelLateral({ zona, aoEditarZona }) {
 
             <section className="linha-superior">
 
-                <CardUmidade />
+                <CardUmidade
+                    umidade={dadosZona?.umidade_media}
+                    umidadeMinima={zona?.min_umidade}
+                    umidadeMaxima={zona?.max_umidade}
+                />
 
                 <CardBomba />
 
@@ -46,7 +50,7 @@ function PainelLateral({ zona, aoEditarZona }) {
 
                 <div className="coluna-esquerda">
                     <GraficoUmidade
-                        dados={zona?.historicoUmidade || []}
+                        dados={dadosZona?.historico_umidade || []}
                     />
                 </div>
 

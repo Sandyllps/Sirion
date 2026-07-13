@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { buscarZonasPorUsuario, excluirZona } from "../../api";
+import { buscarZonasPorUsuario, buscarDadosDashboard } from "../../api";
 
 import EditarZona from "../../componentes/EditarZona/EditarZona";
 import Cabecalho from "../../componentes/Cabecalho/Cabecalho";
@@ -16,11 +16,63 @@ function Dashboard({ aoSair }) {
     const [modoModal, setModoModal] = useState("editar");
     const [dadosDashboard, setDadosDashboard] = useState(null);
     const [zonaSelecionada, setZonaSelecionada] = useState(null);
+    const [dadosZona, setDadosZona] = useState(null);
     const idUsuario = localStorage.getItem("id_usuario");
 
     useEffect(() => {
         buscarDashboard();
     }, []);
+
+    useEffect(() => {
+        if (!zonaSelecionada) {
+            setDadosZona(null);
+            return;
+        }
+
+        const chaveEsp =
+            zonaSelecionada.esp32?.chave_esp ||
+            zonaSelecionada.chave_esp ||
+            zonaSelecionada.chave;
+
+        if (!chaveEsp) {
+            console.error("A zona selecionada não possui chave ESP32.");
+            setDadosZona(null);
+            return;
+        }
+
+        let componenteAtivo = true;
+
+        async function carregarDadosZona() {
+            try {
+                const dados = await buscarDadosDashboard(chaveEsp);
+
+                if (componenteAtivo) {
+                    setDadosZona(dados);
+                }
+            } catch (erro) {
+                console.error(
+                    "Erro ao carregar dados da zona selecionada:",
+                    erro
+                );
+
+                if (componenteAtivo) {
+                    setDadosZona(null);
+                }
+            }
+        }
+
+        carregarDadosZona();
+
+        const intervalo = setInterval(
+            carregarDadosZona,
+            5000
+        );
+
+        return () => {
+            componenteAtivo = false;
+            clearInterval(intervalo);
+        };
+    }, [zonaSelecionada]);
 
     function alterarMenu(){
         setMenuAberto(!menuAberto);
@@ -135,6 +187,7 @@ function Dashboard({ aoSair }) {
                 <div className="dashboard-container">
                     <PainelLateral
                         zona={zonaSelecionada}
+                        dadosZona={dadosZona}
                         aoEditarZona={abrirEditarZona}
                     />
                 </div>

@@ -131,3 +131,20 @@ export async function excluirZona(idZona) {
 
     return dados;
 }
+
+export async function buscarDadosDashboard(chaveEsp) {
+    const resposta = await fetch(
+        `${API_URL}/dashboard?chave_esp=${encodeURIComponent(chaveEsp)}`
+    );
+
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+        throw new Error(
+            dados?.mensagem ||
+            "Não foi possível carregar os dados do Dashboard."
+        );
+    }
+
+    return dados;
+}

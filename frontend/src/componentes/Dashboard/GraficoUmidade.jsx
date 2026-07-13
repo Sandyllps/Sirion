@@ -1,7 +1,7 @@
 import "./cards.css";
 import "./graficoUmidade.css";
-import {
 
+import {
     LineChart,
     Line,
     XAxis,
@@ -9,62 +9,66 @@ import {
     CartesianGrid,
     Tooltip,
     ResponsiveContainer
-
 } from "recharts";
 
-import "./../../telas/TelaPrincipal/dashboard.css";
-
-function GraficoUmidade({ dados }) {
+function GraficoUmidade({ dados = [] }) {
+    const dadosFormatados = dados.map((registro) => ({
+        ...registro,
+        hora: registro.data_hora
+            ? new Date(registro.data_hora).toLocaleTimeString(
+                "pt-BR",
+                {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            )
+            : "--"
+    }));
 
     return (
-
         <section className="grafico-umidade">
-
             <h3>Histórico de Umidade</h3>
 
-            <ResponsiveContainer
-                width="100%"
-                height={300}
-            >
-
-                <LineChart
-                    data={dados}
+            {dadosFormatados.length === 0 ? (
+                <p>
+                    Nenhuma leitura de umidade registrada.
+                </p>
+            ) : (
+                <ResponsiveContainer
+                    width="100%"
+                    height={300}
                 >
+                    <LineChart data={dadosFormatados}>
+                        <CartesianGrid strokeDasharray="3 3" />
 
-                    <CartesianGrid strokeDasharray="3 3"/>
+                        <XAxis dataKey="hora" />
 
-                    <XAxis dataKey="hora"/>
+                        <YAxis domain={[0, 100]} />
 
-                    <YAxis
-                        domain={[0,100]}
-                    />
+                        <Tooltip
+                            formatter={(valor) => [
+                                `${valor}%`,
+                                "Umidade"
+                            ]}
+                        />
 
-                    <Tooltip/>
-
-                    <Line
-
-                        type="monotone"
-
-                        dataKey="umidade"
-
-                        stroke="#2FA8E0"
-
-                        strokeWidth={2.5}
-
-                        dot={{ r: 3, fill: "#2FA8E0", stroke: "#121D31" }}
-
-                        activeDot={{ r: 5 }}
-
-                    />
-
-                </LineChart>
-
-            </ResponsiveContainer>
-
+                        <Line
+                            type="monotone"
+                            dataKey="umidade"
+                            stroke="#2FA8E0"
+                            strokeWidth={2.5}
+                            dot={{
+                                r: 3,
+                                fill: "#2FA8E0",
+                                stroke: "#121D31"
+                            }}
+                            activeDot={{ r: 5 }}
+                        />
+                    </LineChart>
+                </ResponsiveContainer>
+            )}
         </section>
-
     );
-
 }
 
 export default GraficoUmidade;
