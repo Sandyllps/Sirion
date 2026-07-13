@@ -168,3 +168,49 @@
     }
 
 }
+
+.informacoes-conexao {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+    font-size: 13px;
+}
+
+.indicador-conexao {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-conectado {
+    background-color: #2ca66f;
+}
+
+.status-desconectado {
+    background-color: #d9534f;
+}
+
+.status-nunca-conectado {
+    background-color: #8c8c8c;
+}
+
+.status-carregando {
+    background-color: #e0a800;
+}
+
+.texto-conexao {
+    font-weight: 600;
+}
+
+.ultima-atualizacao {
+    color: #6b7280;
+    margin-left: 6px;
+}
+
+.botao-editar:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
