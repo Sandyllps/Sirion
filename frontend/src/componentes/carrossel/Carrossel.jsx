@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "./carrossel.css";
+import "./Carrossel.css";
 
 function Carrossel() {
 

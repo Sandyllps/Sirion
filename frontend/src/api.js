@@ -16,11 +16,12 @@ async function tratarResposta(resposta) {
 
     if (!resposta.ok) {
         throw new Error(
-            dados?.mensagem || 
-            dados?.resposta || 
-            dados?.response || 
+            dados?.mensagem ||
+            dados?.resposta ||
+            dados?.response ||
+            dados?.erro ||
             "Ocorreu um erro na requisição."
-        );
+        )
     }
 
     return dados;
@@ -147,4 +148,33 @@ export async function buscarDadosDashboard(chaveEsp) {
     }
 
     return dados;
+}
+
+export async function atualizarModoIrrigacao(
+    idZona,
+    idUsuario,
+    modoIrrigacao
+) {
+    return editarZona(
+        idZona,
+        idUsuario,
+        {
+            modo_irrigacao: modoIrrigacao
+        }
+    );
+}
+
+export async function registrarIrrigacaoManual(
+    idZona,
+    idUsuario
+) {
+    const dataAtual = new Date().toISOString();
+
+    return editarZona(
+        idZona,
+        idUsuario,
+        {
+            ultima_irrigacao: dataAtual
+        }
+    );
 }

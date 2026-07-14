@@ -1,41 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { registrarIrrigacaoManual } from "../../api";
+
 import "./cards.css";
 
-function CardUltimaIrrigacao({ idZona }) {
-    const [ultimaIrrigacao, setUltimaIrrigacao] =
-        useState(null);
-
-    const chaveArmazenamento = idZona
-        ? `ultima_irrigacao_${idZona}`
-        : null;
-
-    useEffect(() => {
-        if (!chaveArmazenamento) {
-            setUltimaIrrigacao(null);
-            return;
-        }
-
-        const irrigacaoSalva = localStorage.getItem(
-            chaveArmazenamento
-        );
-
-        setUltimaIrrigacao(irrigacaoSalva);
-    }, [chaveArmazenamento]);
-
-    function registrarIrrigacao() {
-        if (!chaveArmazenamento) {
-            return;
-        }
-
-        const dataAtual = new Date().toISOString();
-
-        localStorage.setItem(
-            chaveArmazenamento,
-            dataAtual
-        );
-
-        setUltimaIrrigacao(dataAtual);
-    }
+function CardUltimaIrrigacao({
+    idZona,
+    idUsuario,
+    ultimaIrrigacao,
+    aoAtualizar
+}) {
+    const [carregando, setCarregando] =
+        useState(false);
 
     function formatarData(dataIrrigacao) {
         if (!dataIrrigacao) {
@@ -57,10 +32,43 @@ function CardUltimaIrrigacao({ idZona }) {
         });
     }
 
+    async function registrarAgora() {
+        if (!idZona || !idUsuario || carregando) {
+            return;
+        }
+
+        try {
+            setCarregando(true);
+
+            await registrarIrrigacaoManual(
+                idZona,
+                idUsuario
+            );
+
+            if (aoAtualizar) {
+                await aoAtualizar();
+            }
+        } catch (erro) {
+            console.error(
+                "Erro ao registrar irrigação:",
+                erro
+            );
+
+            alert(
+                "Não foi possível registrar a irrigação."
+            );
+        } finally {
+            setCarregando(false);
+        }
+    }
+
     return (
         <section className="cartao-dashboard card-ambar">
             <div className="cartao-cabecalho">
-                <span className="cartao-icone">🕒</span>
+                <span className="cartao-icone">
+                    🕒
+                </span>
+
                 <h3>Última Irrigação</h3>
             </div>
 
@@ -73,10 +81,16 @@ function CardUltimaIrrigacao({ idZona }) {
             <button
                 type="button"
                 className="botao-modo"
-                onClick={registrarIrrigacao}
-                disabled={!idZona}
+                onClick={registrarAgora}
+                disabled={
+                    !idZona ||
+                    !idUsuario ||
+                    carregando
+                }
             >
-                Registrar agora
+                {carregando
+                    ? "Registrando..."
+                    : "Registrar agora"}
             </button>
         </section>
     );

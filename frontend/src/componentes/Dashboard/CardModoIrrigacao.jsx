@@ -1,46 +1,72 @@
 import { useEffect, useState } from "react";
+import { atualizarModoIrrigacao } from "../../api";
+
 import "./cards.css";
 
-function CardModoIrrigacao({ idZona }) {
+function CardModoIrrigacao({
+    idZona,
+    idUsuario,
+    modoIrrigacao,
+    aoAtualizar
+}) {
     const [modoAutomatico, setModoAutomatico] =
         useState(true);
 
-    const chaveArmazenamento = idZona
-        ? `modo_irrigacao_${idZona}`
-        : null;
+    const [carregando, setCarregando] =
+        useState(false);
 
     useEffect(() => {
-        if (!chaveArmazenamento) {
-            setModoAutomatico(true);
+        setModoAutomatico(
+            modoIrrigacao !== "manual"
+        );
+    }, [modoIrrigacao, idZona]);
+
+    async function alterarModo() {
+        if (!idZona || !idUsuario || carregando) {
             return;
         }
 
-        const modoSalvo = localStorage.getItem(
-            chaveArmazenamento
-        );
+        const novoModo = modoAutomatico
+            ? "manual"
+            : "automatico";
 
-        setModoAutomatico(modoSalvo !== "manual");
-    }, [chaveArmazenamento]);
+        try {
+            setCarregando(true);
 
-    function alterarModo() {
-        const novoModoAutomatico = !modoAutomatico;
-
-        setModoAutomatico(novoModoAutomatico);
-
-        if (chaveArmazenamento) {
-            localStorage.setItem(
-                chaveArmazenamento,
-                novoModoAutomatico
-                    ? "automatico"
-                    : "manual"
+            await atualizarModoIrrigacao(
+                idZona,
+                idUsuario,
+                novoModo
             );
+
+            setModoAutomatico(
+                novoModo === "automatico"
+            );
+
+            if (aoAtualizar) {
+                await aoAtualizar();
+            }
+        } catch (erro) {
+            console.error(
+                "Erro ao alterar modo de irrigação:",
+                erro
+            );
+
+            alert(
+                "Não foi possível alterar o modo de irrigação."
+            );
+        } finally {
+            setCarregando(false);
         }
     }
 
     return (
         <section className="cartao-dashboard card-roxo">
             <div className="cartao-cabecalho">
-                <span className="cartao-icone">🎛️</span>
+                <span className="cartao-icone">
+                    🎛️
+                </span>
+
                 <h3>Modo de Irrigação</h3>
             </div>
 
@@ -55,9 +81,15 @@ function CardModoIrrigacao({ idZona }) {
                     type="button"
                     className="botao-modo"
                     onClick={alterarModo}
-                    disabled={!idZona}
+                    disabled={
+                        !idZona ||
+                        !idUsuario ||
+                        carregando
+                    }
                 >
-                    Alterar modo
+                    {carregando
+                        ? "Alterando..."
+                        : "Alterar modo"}
                 </button>
             </div>
         </section>

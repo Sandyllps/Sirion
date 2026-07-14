@@ -1,6 +1,6 @@
 import "./telaCadastro.css";
 
-import Carrossel from "../../componentes/Carrossel/Carrossel";
+import Carrossel from "../../componentes/carrossel/Carrossel";
 import BotoesLaterais from "../../componentes/BotoesLaterais/BotoesLaterais";
 import Cadastro from "../../componentes/Cadastro/Cadastro";
 

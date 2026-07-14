@@ -17,6 +17,18 @@ const zoneSchema = new mongoose.Schema({
     type: Number, 
     required: true 
   },
+
+  modo_irrigacao: {
+    type: String,
+    enum: ["automatico", "manual"],
+    default: "automatico"
+  },
+
+  ultima_irrigacao: {
+    type: Date,
+    default: null
+  },
+  
   // Aqui começa o objeto aninhado
   esp32: {
     pino_sensor_vazao: { 

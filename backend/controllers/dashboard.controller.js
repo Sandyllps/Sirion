@@ -100,8 +100,8 @@ async function getDashboard(req, res) {
             status_conexao: statusConexao,
 
             bomba_ativa: null,
-            ultima_irrigacao: null,
-            modo_irrigacao: "automatico",
+            ultima_irrigacao: zona.ultima_irrigacao || null,
+            modo_irrigacao: zona.modo_irrigacao || "automatico",
 
             alertas,
             historico_umidade: historicoUmidade

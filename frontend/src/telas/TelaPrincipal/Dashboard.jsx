@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { buscarZonasPorUsuario, buscarDadosDashboard } from "../../api";
+import { buscarZonasPorUsuario, buscarDadosDashboard, excluirZona } from "../../api";
 
 import EditarZona from "../../componentes/EditarZona/EditarZona";
 import Cabecalho from "../../componentes/Cabecalho/Cabecalho";
@@ -93,7 +93,7 @@ function Dashboard({ aoSair }) {
     }
 
     function atualizarDashboard() {
-        buscarDashboard();
+        return buscarDashboard();
     }
 
     async function removerZona(zona) {
@@ -188,7 +188,21 @@ function Dashboard({ aoSair }) {
                     <PainelLateral
                         zona={zonaSelecionada}
                         dadosZona={dadosZona}
+                        idUsuario={idUsuario}
                         aoEditarZona={abrirEditarZona}
+                        aoAtualizar={async () => {
+                            await buscarDashboard();
+
+                            const chaveEsp =
+                                zonaSelecionada?.esp32?.chave_esp;
+
+                            if (chaveEsp) {
+                                const dados =
+                                    await buscarDadosDashboard(chaveEsp);
+
+                                setDadosZona(dados);
+                            }
+                        }}
                     />
                 </div>
 

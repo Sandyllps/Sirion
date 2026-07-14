@@ -1,6 +1,6 @@
 import "./telaLogin.css";
 
-import Carrossel from "../../componentes/Carrossel/Carrossel";
+import Carrossel from "../../componentes/carrossel/Carrossel";
 import BotoesLaterais from "../../componentes/BotoesLaterais/BotoesLaterais";
 import Login from "../../componentes/Login/Login";
 
