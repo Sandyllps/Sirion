@@ -5,7 +5,9 @@ import "./login.css";
 import RecuperarSenha from "../RecuperarSenha/RecuperarSenha";
 
 function Login({ aoConcluirLogin }) {
-    const [mostrarRecuperacao, setMostrarRecuperacao] = useState(false);
+    const [mostrarRecuperacao, setMostrarRecuperacao] =
+        useState(false);
+
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [mensagemErro, setMensagemErro] = useState("");
@@ -19,27 +21,71 @@ function Login({ aoConcluirLogin }) {
         setMostrarRecuperacao(false);
     }
 
+    function alterarEmail(evento) {
+        setEmail(evento.target.value);
+
+        if (mensagemErro) {
+            setMensagemErro("");
+        }
+    }
+
+    function alterarSenha(evento) {
+        setSenha(evento.target.value);
+
+        if (mensagemErro) {
+            setMensagemErro("");
+        }
+    }
+
     async function entrar(evento) {
         evento.preventDefault();
+
+        if (carregando) {
+            return;
+        }
 
         setMensagemErro("");
 
         if (!email.trim() || !senha.trim()) {
-            setMensagemErro("Preencha o e-mail e a senha.");
+            setMensagemErro(
+                "Preencha o e-mail e a senha para continuar."
+            );
+            return;
+        }
+
+        const emailValido =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+        if (!emailValido) {
+            setMensagemErro(
+                "Informe um endereço de e-mail válido."
+            );
             return;
         }
 
         try {
             setCarregando(true);
 
-            const dadosUsuario = await loginUsuario(email, senha);
+            const dadosUsuario = await loginUsuario(
+                email.trim(),
+                senha
+            );
 
             if (aoConcluirLogin) {
                 aoConcluirLogin(dadosUsuario);
             }
         } catch (erro) {
             console.error("Erro ao fazer login:", erro);
-            setMensagemErro(erro.message);
+
+            const servidorIndisponivel =
+                erro instanceof TypeError;
+
+            setMensagemErro(
+                servidorIndisponivel
+                    ? "Não foi possível conectar ao servidor. Tente novamente quando a API estiver disponível."
+                    : erro.message ||
+                      "Não foi possível realizar o login."
+            );
         } finally {
             setCarregando(false);
         }
@@ -48,57 +94,106 @@ function Login({ aoConcluirLogin }) {
     return (
         <>
             <div className="formulario-login">
-                <h1>Que bom ter você de volta!</h1>
+                <header className="cabecalho-formulario-login">
+                    <h1>Que bom ter você de volta!</h1>
 
-                <p>Faça seu login para continuar</p>
+                    <p className="subtitulo-login">
+                        Faça seu login para continuar
+                    </p>
+                </header>
 
-                <form onSubmit={entrar}>
-                    <label htmlFor="email">E-mail</label>
+                <form onSubmit={entrar} noValidate>
+                    <div className="mb-3">
+                        <label
+                            className="form-label"
+                            htmlFor="email"
+                        >
+                            E-mail
+                        </label>
 
-                    <input
-                        id="email"
-                        type="email"
-                        value={email}
-                        onChange={(evento) => setEmail(evento.target.value)}
-                        autoComplete="email"
-                    />
+                        <input
+                            id="email"
+                            className="form-control campo-login"
+                            type="email"
+                            value={email}
+                            onChange={alterarEmail}
+                            autoComplete="email"
+                            aria-invalid={
+                                mensagemErro ? "true" : "false"
+                            }
+                        />
+                    </div>
 
-                    <label htmlFor="senha">Senha</label>
+                    <div className="mb-2">
+                        <label
+                            className="form-label"
+                            htmlFor="senha"
+                        >
+                            Senha
+                        </label>
 
-                    <input
-                        id="senha"
-                        type="password"
-                        value={senha}
-                        onChange={(evento) => setSenha(evento.target.value)}
-                        autoComplete="current-password"
-                    />
+                        <input
+                            id="senha"
+                            className="form-control campo-login"
+                            type="password"
+                            value={senha}
+                            onChange={alterarSenha}
+                            autoComplete="current-password"
+                            aria-invalid={
+                                mensagemErro ? "true" : "false"
+                            }
+                        />
+                    </div>
 
-                    {mensagemErro && (
-                        <p className="mensagem-erro">
-                            {mensagemErro}
-                        </p>
-                    )}
+                    <div className="area-recuperar-senha">
+                        <button
+                            type="button"
+                            className="btn btn-link esqueci-senha"
+                            onClick={abrirRecuperacao}
+                        >
+                            Esqueci minha senha
+                        </button>
+                    </div>
 
-                    <button
-                        type="button"
-                        className="esqueci-senha"
-                        onClick={abrirRecuperacao}
+                    <div
+                        className="area-mensagem-login"
+                        aria-live="polite"
                     >
-                        Esqueci minha senha
-                    </button>
+                        {mensagemErro && (
+                            <div
+                                className="alert alert-danger mensagem-formulario"
+                                role="alert"
+                            >
+                                {mensagemErro}
+                            </div>
+                        )}
+                    </div>
 
                     <button
                         type="submit"
-                        className="botao-enviar"
+                        className="btn botao-enviar"
                         disabled={carregando}
                     >
-                        {carregando ? "Entrando..." : "Entrar"}
+                        {carregando && (
+                            <span
+                                className="spinner-border spinner-border-sm"
+                                aria-hidden="true"
+                            />
+                        )}
+
+                        <span>
+                            {carregando
+                                ? "Entrando..."
+                                : "Entrar"}
+                        </span>
                     </button>
                 </form>
             </div>
 
             {mostrarRecuperacao && (
-                <RecuperarSenha fecharPopup={fecharRecuperacao} />
+                <RecuperarSenha
+                    fecharPopup={fecharRecuperacao}
+                />
             )}
         </>
     );

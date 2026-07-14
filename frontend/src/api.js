@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:8080";
+const API_URL =
+    import.meta.env.VITE_API_URL ||
+    "http://localhost:8080";
 
 
 // Função para tratar as respostas da API. Não havia sido criada
@@ -29,48 +31,44 @@ async function tratarResposta(resposta) {
 
 
 export async function loginUsuario(email, senha) {
-    const resposta = await fetch(`${API_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            email,
-            senha
-        })
-    });
+    const resposta = await fetch(
+        `${API_URL}/auth/login`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email,
+                senha
+            })
+        }
+    );
 
-    const dados = await resposta.json();
-
-    if (!resposta.ok) {
-        throw new Error(dados?.response || "Erro ao fazer login.");
-    }
-
-    return dados;
+    return tratarResposta(resposta);
 }
 
-export async function cadastrarUsuario(nome, email, senha) {
-    const resposta = await fetch(`${API_URL}/auth/signup`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            nome,
-            email,
-            senha
-        })
-    });
+export async function cadastrarUsuario(
+    nome,
+    email,
+    senha
+) {
+    const resposta = await fetch(
+        `${API_URL}/auth/signup`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                nome,
+                email,
+                senha
+            })
+        }
+    );
 
-    const dados = await resposta.json();
-
-    if (!resposta.ok) {
-        throw new Error(
-            dados?.resposta || "Não foi possível realizar o cadastro."
-        );
-    }
-
-    return dados;
+    return tratarResposta(resposta);
 }
 
 export async function buscarZonasPorUsuario(idUsuario) {
@@ -178,3 +176,25 @@ export async function registrarIrrigacaoManual(
         }
     );
 }
+
+export async function recuperarSenhaUsuario(
+    email,
+    novaSenha
+) {
+    const resposta = await fetch(
+        `${API_URL}/auth/recuperar-senha`,
+        {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email,
+                novaSenha
+            })
+        }
+    );
+
+    return tratarResposta(resposta);
+}
+

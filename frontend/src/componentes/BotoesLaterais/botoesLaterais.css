@@ -1,47 +1,105 @@
-.botoes-laterais{
-    position:absolute;
-    top:50%;
-    transform:translateY(-50%);
-    display:flex;
-    flex-direction:column;
-    gap:18px;
-    z-index:100;
+.botoes-laterais {
+    position: absolute;
+    top: 50%;
+    z-index: 10;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    transform: translateY(-50%);
 }
 
-.botoes-laterais.cadastro{
-    left:-65px;
+/* No login, o painel está à esquerda da imagem */
+.botoes-laterais.login {
+    right: -58px;
 }
 
-.botoes-laterais.login{
-    right:-65px;
+/* No cadastro, o painel está à direita da imagem */
+.botoes-laterais.cadastro {
+    left: -58px;
 }
 
-.botao-cadastrar,
-.botao-login{
-    width:130px;
-    height:80px;
-    border:none;
-    border-radius:15px;
-    font-size:20px;
-    transition:.3s;
-    box-shadow:0 8px 18px rgba(0,0,0,.18);
+.botao-autenticacao {
+    width: 116px;
+    min-height: 58px;
+
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    opacity: 0.72;
+
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.16);
+
+    transition:
+        opacity 220ms ease,
+        background-color 220ms ease,
+        color 220ms ease,
+        box-shadow 220ms ease;
 }
 
-.botao-cadastrar{
-    background:#217B71;
-    color:#ACE5B8;
-    opacity:.55;
+.botoes-laterais.login .botao-autenticacao {
+    background: #215e7d;
+    color: #abdef9;
 }
 
-.botao-login{
-    background:#215E7D;
-    color:#ABDEF9;
-    opacity:.55;
+.botoes-laterais.cadastro .botao-autenticacao {
+    background: #217b71;
+    color: #c8f0d1;
 }
 
-.botao-cadastrar.ativo,
-.botao-login.ativo{
-    opacity:1;
-    transform:scale(1.04);
-    box-shadow:0 10px 24px rgba(0,0,0,.28);
+.botao-autenticacao:hover {
+    opacity: 0.9;
+}
+
+.botao-autenticacao.ativo {
+    opacity: 1;
+
+    border-color: rgba(255, 255, 255, 0.38);
+
+    box-shadow: 0 7px 17px rgba(0, 0, 0, 0.2);
+}
+
+.botoes-laterais.login .botao-autenticacao.ativo {
+    background: #2b7195;
+    color: #ffffff;
+}
+
+.botoes-laterais.cadastro .botao-autenticacao.ativo {
+    background: #299186;
+    color: #ffffff;
+}
+
+.botao-autenticacao:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, 0.65);
+    outline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+    .botoes-laterais {
+        position: static;
+        transform: none;
+
+        width: 100%;
+
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+
+        margin-bottom: 28px;
+    }
+
+    .botao-autenticacao {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .botao-autenticacao {
+        transition: none;
+    }
 }

@@ -12,19 +12,24 @@ function TelaLogin({
     return (
         <div className="pagina-login">
             <div className="container-login">
-                <div className="painel-login">
-                    <BotoesLaterais
-                        tela="login"
-                        aoAbrirLogin={aoAbrirLogin}
-                        aoAbrirCadastro={aoAbrirCadastro}
-                    />
+                <section className="painel-login">
+                    <div className="conteudo-login">
+                        <BotoesLaterais
+                            tela="login"
+                            aoAbrirLogin={aoAbrirLogin}
+                            aoAbrirCadastro={aoAbrirCadastro}
+                        />
 
-                    <Login
-                        aoConcluirLogin={aoConcluirLogin}
-                    />
-                </div>
+                        <Login
+                            aoConcluirLogin={aoConcluirLogin}
+                        />
+                    </div>
+                </section>
 
-                <div className="imagem-lateral">
+                <div
+                    className="imagem-lateral-login"
+                    aria-hidden="true"
+                >
                     <Carrossel />
                 </div>
             </div>

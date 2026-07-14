@@ -6,14 +6,18 @@ function BotoesLaterais({
     aoAbrirLogin
 }) {
     return (
-        <div className={`botoes-laterais ${tela}`}>
+        <div
+            className={`botoes-laterais ${tela}`}
+            role="tablist"
+            aria-label="Alternar entre login e cadastro"
+        >
             <button
                 type="button"
-                className={
-                    tela === "cadastro"
-                        ? "botao-cadastrar ativo"
-                        : "botao-cadastrar"
-                }
+                role="tab"
+                aria-selected={tela === "cadastro"}
+                className={`botao-autenticacao ${
+                    tela === "cadastro" ? "ativo" : ""
+                }`}
                 onClick={aoAbrirCadastro}
             >
                 Cadastrar
@@ -21,11 +25,11 @@ function BotoesLaterais({
 
             <button
                 type="button"
-                className={
-                    tela === "login"
-                        ? "botao-login ativo"
-                        : "botao-login"
-                }
+                role="tab"
+                aria-selected={tela === "login"}
+                className={`botao-autenticacao ${
+                    tela === "login" ? "ativo" : ""
+                }`}
                 onClick={aoAbrirLogin}
             >
                 Login

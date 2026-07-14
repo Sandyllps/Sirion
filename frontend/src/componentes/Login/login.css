@@ -1,69 +1,216 @@
+.formulario-login {
+    width: 100%;
 
-.formulario-login{
-    width:62%;
-    max-width:620px;
-    display:flex;
-    flex-direction:column;
+    display: flex;
+    flex-direction: column;
+
+    color: #abdef9;
 }
 
-.formulario-login h1{
-    margin-top:70px;
-    color:#ABDEF9;
-    font-size:45px;
-    font-weight:700;
-    margin-bottom:8px;
+.cabecalho-formulario-login {
+    margin-bottom: 30px;
 }
 
-.formulario-login p{
-    color:#ABDEF9;
-    font-size:36px;
-    margin-bottom:30px;
+.formulario-login h1 {
+    margin: 0 0 8px;
+
+    color: #abdef9;
+
+    font-size: clamp(34px, 4vw, 48px);
+    line-height: 1.12;
+    font-weight: 700;
 }
 
-.formulario-login form{
-    display:flex;
-    flex-direction:column;
-    gap:5px;
+.formulario-login .subtitulo-login {
+    margin: 0;
+
+    color: rgba(214, 240, 255, 0.9);
+
+    font-size: clamp(20px, 2vw, 29px);
+    line-height: 1.4;
 }
 
-.formulario-login label{
-    color:#ABDEF9;
-    font-size:20px;
+.formulario-login .form-label {
+    margin-bottom: 7px;
+
+    color: #d2efff;
+
+    font-size: 17px;
+    font-weight: 500;
 }
 
-.formulario-login input{
-    width:100%;
-    height:50px;
-    border:none;
-    border-radius:25px;
-    padding-left:20px;
-    background:#215E7D;
-    border:1px solid #ABDEF9;
-    margin-bottom:25px;
+.formulario-login .campo-login {
+    width: 100%;
+    min-height: 52px;
+
+    padding: 11px 18px;
+
+    border: 1px solid rgba(171, 222, 249, 0.9);
+    border-radius: 26px;
+
+    background: rgba(15, 59, 82, 0.16);
+    color: #ffffff;
+
+    font-size: 17px;
+
+    box-shadow: none;
+
+    transition:
+        border-color 200ms ease,
+        background-color 200ms ease,
+        box-shadow 200ms ease;
 }
 
-.esqueci-senha{
-    width:max-content;
-    border:none;
-    background:transparent;
-    color:#ABDEF9;
-    font-size:16px;
-    text-align:left;
-    margin-top:-15px;
-    margin-bottom:30px;
-    padding:0;
+.formulario-login .campo-login:focus {
+    border-color: #ffc25c;
+    background: rgba(15, 59, 82, 0.3);
+
+    color: #ffffff;
+
+    box-shadow: 0 0 0 4px rgba(255, 194, 92, 0.18);
 }
 
-
-.formulario-login .botao-enviar{
-    width:100%;
-    height:50px;
-    border:none;
-    border-radius:30px;
-    background:#ABDEF9;
-    color:#215E7D;
-    font-size:25px;
-    font-weight:700;
+.formulario-login .campo-login:-webkit-autofill {
+    -webkit-text-fill-color: #ffffff;
+    transition: background-color 9999s ease-in-out;
 }
 
+.area-recuperar-senha {
+    min-height: 38px;
 
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.formulario-login .esqueci-senha {
+    padding: 5px 2px;
+
+    color: #d2efff;
+
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+
+    transition:
+        color 180ms ease,
+        text-decoration-color 180ms ease;
+}
+
+.formulario-login .esqueci-senha:hover {
+    color: #ffffff;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.formulario-login .esqueci-senha:focus-visible {
+    border-radius: 5px;
+
+    outline: 3px solid rgba(255, 255, 255, 0.4);
+    outline-offset: 2px;
+
+    box-shadow: none;
+}
+
+.area-mensagem-login {
+    min-height: 62px;
+
+    display: flex;
+    align-items: flex-start;
+
+    margin-top: 5px;
+}
+
+.formulario-login .mensagem-formulario {
+    width: 100%;
+    margin: 0;
+    padding: 11px 14px;
+
+    border: 1px solid rgba(220, 53, 69, 0.4);
+    border-radius: 12px;
+
+    font-size: 15px;
+    line-height: 1.4;
+
+    animation: aparecerMensagem 220ms ease both;
+}
+
+.formulario-login .botao-enviar {
+    width: 100%;
+    min-height: 52px;
+
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+
+    border: none;
+    border-radius: 28px;
+
+    background: #abdef9;
+    color: #174b66;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    box-shadow: 0 8px 20px rgba(7, 33, 47, 0.18);
+
+    transition:
+        transform 180ms ease,
+        background-color 180ms ease,
+        box-shadow 180ms ease,
+        opacity 180ms ease;
+}
+
+.formulario-login .botao-enviar:hover:not(:disabled) {
+    background: #c2e9ff;
+    color: #174b66;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 11px 24px rgba(7, 33, 47, 0.24);
+}
+
+.formulario-login .botao-enviar:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.formulario-login .botao-enviar:disabled {
+    display: inline-flex;
+
+    background: #abdef9;
+    color: #174b66;
+
+    opacity: 0.7;
+    cursor: wait;
+}
+
+@keyframes aparecerMensagem {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 520px) {
+    .formulario-login h1 {
+        font-size: 33px;
+    }
+
+    .formulario-login .subtitulo-login {
+        font-size: 20px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .formulario-login *,
+    .formulario-login .mensagem-formulario {
+        animation: none;
+        transition: none;
+    }
+}

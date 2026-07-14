@@ -1,50 +1,105 @@
-.pagina-login{
-    width:100vw;
-    height:100vh;
-    display:flex;
+.pagina-login {
+    width: 100%;
+    min-height: 100svh;
+    overflow: hidden;
+
+    background: #215e7d;
+
+    animation: fadeInAutenticacao 350ms ease-out both;
 }
 
-.container-login{
-    width:100%;
-    height:100%;
-    display:flex;
+@keyframes fadeInAutenticacao {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
-.painel-login{
-    background:#215E7D;
-    flex:1;
+.container-login {
+    width: 100%;
+    min-height: 100svh;
 
-    position:relative;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
+    display: flex;
 }
 
-.imagem-lateral{
-    flex:1;
-    height:100vh;
-    overflow:hidden;
-    position:relative;
+.painel-login {
+    position: relative;
+    overflow: visible;
 }
 
-.carrossel{
-    width:100%;
-    height:100%;
+.conteudo-login {
+    width: min(100%, 650px);
+    padding: clamp(32px, 5vw, 72px);
 }
 
-.carrossel .imagem{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    opacity:0;
-    transition:opacity 1s;
+.imagem-lateral-login {
+    position: relative;
+
+    flex: 1 1 50%;
+    min-height: 100svh;
+
+    overflow: hidden;
 }
 
-.carrossel .imagem.ativa{
-    opacity:1;
+.imagem-lateral-login .carrossel {
+    width: 100%;
+    height: 100%;
+}
+
+.imagem-lateral-login .carrossel .imagem {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+.imagem-lateral-login .carrossel .imagem.ativa {
+    opacity: 1;
+}
+
+@keyframes entradaPaginaLogin {
+    from {
+        opacity: 0;
+        transform: translateX(-18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@media (max-width: 900px) {
+    .imagem-lateral-login {
+        display: none;
+    }
+
+    .painel-login {
+        flex-basis: 100%;
+    }
+
+    .conteudo-login {
+        width: min(100%, 620px);
+    }
+}
+
+@media (max-width: 520px) {
+    .conteudo-login {
+        padding: 24px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pagina-login {
+        animation: none;
+    }
 }

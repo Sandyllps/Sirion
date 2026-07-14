@@ -1,57 +1,103 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+.pagina-cadastro {
+    width: 100%;
+    min-height: 100svh;
+    overflow: hidden;
+
+    background: #217b71;
+
+    animation: fadeInAutenticacao 350ms ease-out both;
 }
 
-body{
-    font-family:Arial, Helvetica, sans-serif;
+@keyframes fadeInAutenticacao {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
-.pagina-cadastro{
-    width:100vw;
-    height:100vh;
-    display:flex;
+.container-cadastro {
+    width: 100%;
+    min-height: 100svh;
+
+    display: flex;
 }
 
-.container-cadastro{
-    width:100%;
-    height:100%;
-    display:flex;
+.painel-cadastro {
+    position: relative;
+    overflow: visible;
 }
 
-.imagem-lateral{
-    flex:1;
-    height:100vh;
-    overflow:hidden;
-    position:relative;
+.conteudo-cadastro {
+    width: min(100%, 650px);
+    padding: clamp(32px, 5vw, 72px);
 }
 
-.carrossel{
-    width:100%;
-    height:100%;
+.imagem-lateral-cadastro {
+    position: relative;
+
+    flex: 1 1 50%;
+    min-height: 100svh;
+
+    overflow: hidden;
 }
 
-.carrossel .imagem{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    opacity:0;
-    transition:opacity 1s;
+.imagem-lateral-cadastro .carrossel {
+    width: 100%;
+    height: 100%;
 }
 
-.carrossel .imagem.ativa{
-    opacity:1;
+.imagem-lateral-cadastro .carrossel .imagem {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    opacity: 0;
+    transition: opacity 1s ease;
 }
 
-.painel-cadastro{
-    flex:1;
-    align-items:center;
-    background:#217B71;
-    position:relative;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+.imagem-lateral-cadastro .carrossel .imagem.ativa {
+    opacity: 1;
+}
+
+@keyframes entradaPaginaCadastro {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 900px) {
+    .imagem-lateral-cadastro {
+        display: none;
+    }
+
+    .painel-cadastro {
+        flex-basis: 100%;
+    }
+
+    .conteudo-cadastro {
+        width: min(100%, 620px);
+    }
+}
+
+@media (max-width: 520px) {
+    .conteudo-cadastro {
+        padding: 24px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pagina-cadastro {
+        animation: none;
+    }
 }

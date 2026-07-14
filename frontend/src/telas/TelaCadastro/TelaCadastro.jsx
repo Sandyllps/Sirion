@@ -11,21 +11,26 @@ function TelaCadastro({
     return (
         <div className="pagina-cadastro">
             <div className="container-cadastro">
-                <div className="imagem-lateral">
+                <div
+                    className="imagem-lateral-cadastro"
+                    aria-hidden="true"
+                >
                     <Carrossel />
                 </div>
 
-                <div className="painel-cadastro">
-                    <BotoesLaterais
-                        tela="cadastro"
-                        aoAbrirLogin={aoAbrirLogin}
-                        aoAbrirCadastro={aoAbrirCadastro}
-                    />
+                <section className="painel-cadastro">
+                    <div className="conteudo-cadastro">
+                        <BotoesLaterais
+                            tela="cadastro"
+                            aoAbrirLogin={aoAbrirLogin}
+                            aoAbrirCadastro={aoAbrirCadastro}
+                        />
 
-                    <Cadastro
-                        aoCadastroConcluido={aoAbrirLogin}
-                    />
-                </div>
+                        <Cadastro
+                            aoCadastroConcluido={aoAbrirLogin}
+                        />
+                    </div>
+                </section>
             </div>
         </div>
     );
