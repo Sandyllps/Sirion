@@ -65,9 +65,47 @@ async function signUp(req, res){
     }
 }
 
+async function recuperarSenha(req, res) {
+    const { email, novaSenha } = req.body;
+
+    if (!email || !novaSenha) {
+        return res.status(400).json({
+            resposta: "Informe o e-mail e a nova senha."
+        });
+    }
+
+    try {
+        const [usuarios] = await mysqlPool.execute(
+            "SELECT id FROM usuarios WHERE email = ?",
+            [email]
+        );
+
+        if (usuarios.length === 0) {
+            return res.status(404).json({
+                resposta: "Nenhum usuário foi encontrado com este e-mail."
+            });
+        }
+
+        await mysqlPool.execute(
+            "UPDATE usuarios SET senha_hash = ? WHERE email = ?",
+            [novaSenha, email]
+        );
+
+        return res.status(200).json({
+            resposta: "Senha alterada com sucesso."
+        });
+    } catch (erro) {
+        console.error("Erro ao recuperar senha:", erro);
+
+        return res.status(500).json({
+            resposta: "Não foi possível alterar a senha."
+        });
+    }
+}
+
 
 export {login}
 export {signUp}
-
+export { recuperarSenha };
 
 

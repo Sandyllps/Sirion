@@ -10,7 +10,9 @@ import GraficoUmidade from "../Dashboard/GraficoUmidade";
 function PainelLateral({
     zona,
     dadosZona,
-    aoEditarZona
+    idUsuario,
+    aoEditarZona,
+    aoAtualizar
 }) {
     function obterTextoConexao() {
         if (!zona) {
