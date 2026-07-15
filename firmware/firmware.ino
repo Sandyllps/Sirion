@@ -227,7 +227,7 @@ void loop() {
   if (!client.connected()) {
     reconnect();
   }
-  
+
   //mantém a comunicação rodando em segundo plano
   client.loop();
 
@@ -235,7 +235,7 @@ void loop() {
 
   //ex.: publicar uma mensagem a cada 5 segundos
   static unsigned long lastMsg = 0;
-  
+
   if (now - lastMsg > 5000) {
     lastMsg = now;
 
@@ -244,21 +244,24 @@ void loop() {
 
       for (int i = 0; i < quantidadeSensoresUmidade; i++) {
         int leitura = analogRead(pinosSensoresUmidade[i]);
-        int porcentagemUmidade = converterLeituraUmidadeParaPorcentagem(leitura);
+
+        int porcentagemUmidade =
+          converterLeituraUmidadeParaPorcentagem(leitura);
+
         somaUmidade += porcentagemUmidade;
 
         Serial.print("Leitura do sensor de umidade no pino ");
         Serial.print(pinosSensoresUmidade[i]);
         Serial.print(": ");
         Serial.println(leitura);
+
         Serial.print("Leitura percentual: ");
         Serial.print(porcentagemUmidade);
         Serial.println("%");
       }
-      
-      int mediaUmidade = somaUmidade / quantidadeSensoresUmidade;
-      
-      
+
+      int mediaUmidade =
+        somaUmidade / quantidadeSensoresUmidade;
 
       //atualizarConsumo() apenas contabiliza os pulsos do sensor de vazão e soma no consumo total
       // uint32_t pulsosLidos = 0;
@@ -282,49 +285,83 @@ void loop() {
       //   Serial.println("Pulsos insuficientes para considerar fluxo real de água.");
       // }
 
-      //aqui estamos usando a média d eumidade para saber se precisamos ligar/desligar a bomba
+      //aqui estamos usando a média de umidade para saber se precisamos ligar/desligar a bomba
       if (pinoPodeSerOutput(pinoBombaInt)) {
-        if(mediaUmidade < umidadeMinimaConfigurada){
+        if (mediaUmidade < umidadeMinimaConfigurada) {
           if (bombaLigada == 0) {
             digitalWrite(pinoBombaInt, HIGH);
             bombaLigada = 1;
-            Serial.println("Bomba ligada automaticamente por baixa umidade.");
+
+            Serial.println(
+              "Bomba ligada automaticamente por baixa umidade."
+            );
           }
-        } else if(mediaUmidade >= umidadeMaximaConfigurada){
+        } else if (
+          mediaUmidade >= umidadeMaximaConfigurada
+        ) {
           if (bombaLigada == 1) {
             digitalWrite(pinoBombaInt, LOW);
             bombaLigada = 0;
-            Serial.println("Bomba desligada automaticamente por umidade suficiente.");
+
+            Serial.println(
+              "Bomba desligada automaticamente por umidade suficiente."
+            );
           }
         }
       } else {
-        Serial.println("Erro: pino da bomba inválido para controle automático.");
+        Serial.println(
+          "Erro: pino da bomba inválido para controle automático."
+        );
+      }
+
+      /*
+       * Esta publicação precisa ficar dentro deste bloco,
+       * porque utiliza mediaUmidade e o estado atual da bomba.
+       */
+      String payload = "{\"chave_esp\":\"";
+
+      payload += chave_esp;
+      payload += "\",\"umidade\":";
+      payload += String(mediaUmidade);
+      payload += ",\"bomba_ativa\":";
+      payload += (
+        bombaLigada == 1
+          ? "true"
+          : "false"
+      );
+      payload += "}";
+
+      Serial.print("Média da umidade: ");
+      Serial.println(mediaUmidade);
+
+      Serial.print("Estado da bomba: ");
+      Serial.println(
+        bombaLigada == 1
+          ? "Ligada"
+          : "Desligada"
+      );
+
+      Serial.print("Publicando leitura do sensor: ");
+      Serial.println(payload);
+
+      bool publicacaoRealizada = client.publish(
+        "sirion/jardim/umidade",
+        payload.c_str()
+      );
+
+      if (!publicacaoRealizada) {
+        Serial.println(
+          "Erro: não foi possível publicar os dados no MQTT."
+        );
       }
 
     } else {
-      Serial.println("Nenhum sensor de umidade configurado para leitura.");
+      Serial.println(
+        "Nenhum sensor de umidade configurado para leitura."
+      );
     }
   }
 }
-
-String payload = "{\"chave_esp\":\"";
-payload += chave_esp;
-payload += "\",\"umidade\":";
-payload += String(mediaUmidade);
-payload += ",\"bomba_ativa\":";
-payload += bombaLigada == 1 ? "true" : "false";
-payload += "}";
-
-Serial.print("Média da umidade: ");
-Serial.println(mediaUmidade);
-
-Serial.print("Estado da bomba: ");
-Serial.println(bombaLigada == 1 ? "Ligada" : "Desligada");
-
-Serial.print("Publicando leitura do sensor: ");
-Serial.println(payload);
-
-client.publish("sirion/jardim/umidade", payload.c_str());
 
 void fazerRequisicaoGET() {
   //verifica se o Wi-Fi está conectado antes de tentar

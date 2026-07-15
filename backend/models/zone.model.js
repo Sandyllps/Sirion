@@ -24,11 +24,6 @@ const zoneSchema = new mongoose.Schema({
     default: "automatico"
   },
 
-  ultima_irrigacao: {
-    type: Date,
-    default: null
-  },
-
   bomba_ativa: {
     type: Boolean,
     default: null
