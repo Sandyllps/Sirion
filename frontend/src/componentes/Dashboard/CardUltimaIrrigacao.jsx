@@ -1,17 +1,8 @@
-import { useState } from "react";
-import { registrarIrrigacaoManual } from "../../api";
-
 import "./cards.css";
 
 function CardUltimaIrrigacao({
-    idZona,
-    idUsuario,
-    ultimaIrrigacao,
-    aoAtualizar
+    ultimaIrrigacao
 }) {
-    const [carregando, setCarregando] =
-        useState(false);
-
     function formatarData(dataIrrigacao) {
         if (!dataIrrigacao) {
             return "Sem registro";
@@ -28,38 +19,9 @@ function CardUltimaIrrigacao({
             month: "2-digit",
             year: "numeric",
             hour: "2-digit",
-            minute: "2-digit"
+            minute: "2-digit",
+            second: "2-digit"
         });
-    }
-
-    async function registrarAgora() {
-        if (!idZona || !idUsuario || carregando) {
-            return;
-        }
-
-        try {
-            setCarregando(true);
-
-            await registrarIrrigacaoManual(
-                idZona,
-                idUsuario
-            );
-
-            if (aoAtualizar) {
-                await aoAtualizar();
-            }
-        } catch (erro) {
-            console.error(
-                "Erro ao registrar irrigação:",
-                erro
-            );
-
-            alert(
-                "Não foi possível registrar a irrigação."
-            );
-        } finally {
-            setCarregando(false);
-        }
     }
 
     return (
@@ -76,22 +38,9 @@ function CardUltimaIrrigacao({
                 {formatarData(ultimaIrrigacao)}
             </h2>
 
-            <p>Registro manual da irrigação</p>
-
-            <button
-                type="button"
-                className="botao-modo"
-                onClick={registrarAgora}
-                disabled={
-                    !idZona ||
-                    !idUsuario ||
-                    carregando
-                }
-            >
-                {carregando
-                    ? "Registrando..."
-                    : "Registrar agora"}
-            </button>
+            <p>
+                Último acionamento real da bomba
+            </p>
         </section>
     );
 }

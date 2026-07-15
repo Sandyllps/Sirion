@@ -120,12 +120,9 @@ function PainelLateral({
                 />
 
                 <CardUltimaIrrigacao
-                    idZona={zona?._id || zona?.id}
-                    idUsuario={idUsuario}
                     ultimaIrrigacao={
                         dadosZona?.ultima_irrigacao
                     }
-                    aoAtualizar={aoAtualizar}
                 />
 
                 <CardModoIrrigacao

@@ -33,6 +33,11 @@ const zoneSchema = new mongoose.Schema({
     type: Boolean,
     default: null
   },
+
+  ultima_irrigacao: {
+    type: Date,
+    default: null
+  },
   
   // Aqui começa o objeto aninhado
   esp32: {

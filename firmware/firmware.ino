@@ -258,19 +258,7 @@ void loop() {
       
       int mediaUmidade = somaUmidade / quantidadeSensoresUmidade;
       
-      String payload = "{\"chave_esp\":\"";
-      payload += chave_esp;
-      payload += "\",\"umidade\":";
-      payload += String(mediaUmidade);
-      payload += "}";
-
-      Serial.print("Média da umidade: ");
-      Serial.println(mediaUmidade);
-
-      Serial.print("Publicando leitura do sensor: ");
-      Serial.println(payload);
-
-      client.publish("sirion/jardim/umidade", payload.c_str());
+      
 
       //atualizarConsumo() apenas contabiliza os pulsos do sensor de vazão e soma no consumo total
       // uint32_t pulsosLidos = 0;
@@ -318,6 +306,25 @@ void loop() {
     }
   }
 }
+
+String payload = "{\"chave_esp\":\"";
+payload += chave_esp;
+payload += "\",\"umidade\":";
+payload += String(mediaUmidade);
+payload += ",\"bomba_ativa\":";
+payload += bombaLigada == 1 ? "true" : "false";
+payload += "}";
+
+Serial.print("Média da umidade: ");
+Serial.println(mediaUmidade);
+
+Serial.print("Estado da bomba: ");
+Serial.println(bombaLigada == 1 ? "Ligada" : "Desligada");
+
+Serial.print("Publicando leitura do sensor: ");
+Serial.println(payload);
+
+client.publish("sirion/jardim/umidade", payload.c_str());
 
 void fazerRequisicaoGET() {
   //verifica se o Wi-Fi está conectado antes de tentar

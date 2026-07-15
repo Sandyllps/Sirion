@@ -47,6 +47,10 @@ function iniciarBrokerMQTT(){
 
                 const chaveESP = dados.chave_esp;
                 const umidade = Number(dados.umidade);
+                const bombaAtiva =
+                    typeof dados.bomba_ativa === "boolean"
+                        ? dados.bomba_ativa
+                        : null;
 
                 if (!chaveESP || Number.isNaN(umidade)) {
                     console.log("[MQTT] Payload de umidade inválido. Esperado: { chave_esp, umidade }");
@@ -66,8 +70,39 @@ function iniciarBrokerMQTT(){
                     id_zona: zona._id,
                 });
 
+                if (bombaAtiva !== null) {
+                    const atualizacaoZona = {
+                        bomba_ativa: bombaAtiva
+                    };
+
+                    const bombaAcabouDeLigar =
+                        bombaAtiva === true &&
+                        zona.bomba_ativa !== true;
+
+                    if (bombaAcabouDeLigar) {
+                        atualizacaoZona.ultima_irrigacao =
+                            new Date();
+                    }
+
+                    await Zone.findByIdAndUpdate(
+                        zona._id,
+                        {
+                            $set: atualizacaoZona
+                        }
+                    );
+                }
+
                 console.log(`[MQTT] Histórico de umidade salvo com sucesso para a zona "${zona.nome}".`);
                 console.log("[MQTT] Registro salvo:", novoHistorico);
+                
+                if (bombaAtiva !== null) {
+                    console.log(
+                        `[MQTT] Estado da bomba: ${
+                            bombaAtiva ? "Ligada" : "Desligada"
+                        }`
+                    );
+                }
+                
             } catch (erro) {
                 console.error("[MQTT] Erro ao processar o histórico de umidade:", erro);
             }
