@@ -85,3 +85,31 @@
     fill:var(--accent-azul);
     stroke:var(--bg-card);
 }
+
+.tooltip-umidade {
+    min-width: 160px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    padding: 10px 12px;
+
+    border: 1px solid var(--border-forte);
+    border-radius: 8px;
+
+    background: var(--bg-input);
+    color: var(--texto-principal);
+
+    box-shadow: var(--sombra-card);
+}
+
+.tooltip-umidade strong {
+    font-size: 12px;
+}
+
+.tooltip-umidade span {
+    color: var(--accent-azul);
+    font-size: 13px;
+    font-weight: 700;
+}

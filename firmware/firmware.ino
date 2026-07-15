@@ -257,7 +257,7 @@ void loop() {
       }
       
       int mediaUmidade = somaUmidade / quantidadeSensoresUmidade;
-
+      
       String payload = "{\"chave_esp\":\"";
       payload += chave_esp;
       payload += "\",\"umidade\":";

@@ -332,3 +332,19 @@
     color:var(--texto-principal);
     font-size:12px;
 }
+
+.item-alerta.alerta-perigo {
+    border-left-color: var(--accent-vermelho);
+}
+
+.item-alerta.alerta-aviso {
+    border-left-color: var(--accent-ambar);
+}
+
+.item-alerta.alerta-sucesso {
+    border-left-color: var(--accent-verde);
+}
+
+.item-alerta.alerta-informacao {
+    border-left-color: var(--accent-azul);
+}

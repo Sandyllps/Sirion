@@ -28,6 +28,11 @@ const zoneSchema = new mongoose.Schema({
     type: Date,
     default: null
   },
+
+  bomba_ativa: {
+    type: Boolean,
+    default: null
+  },
   
   // Aqui começa o objeto aninhado
   esp32: {

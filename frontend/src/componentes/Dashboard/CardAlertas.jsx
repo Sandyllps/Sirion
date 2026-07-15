@@ -16,28 +16,44 @@ function PainelAlertas({ alertas = [] }) {
             day: "2-digit",
             month: "2-digit",
             hour: "2-digit",
-            minute: "2-digit"
+            minute: "2-digit",
+            second: "2-digit"
         });
     }
 
-    const possuiAlertas = alertas.length > 0;
+    const possuiPerigo =
+        alertas.some(
+            (alerta) =>
+                alerta.tipo === "perigo"
+        );
+
+    const possuiAviso =
+        alertas.some(
+            (alerta) =>
+                alerta.tipo === "aviso"
+        );
+
+    const classeCard =
+        possuiPerigo
+            ? "card-vermelho"
+            : possuiAviso
+            ? "card-ambar"
+            : "card-verde";
 
     return (
         <section
-            className={`cartao-dashboard ${
-                possuiAlertas
-                    ? "card-vermelho"
-                    : "card-verde"
-            }`}
+            className={`cartao-dashboard ${classeCard}`}
         >
             <div className="cartao-cabecalho">
-                <span className="cartao-icone">⚠️</span>
+                <span className="cartao-icone">
+                    ⚠️
+                </span>
 
                 <h3>Alertas do Sistema</h3>
 
                 <span
                     className={`selo ${
-                        !possuiAlertas
+                        alertas.length === 0
                             ? "selo-neutro"
                             : ""
                     }`}
@@ -46,26 +62,33 @@ function PainelAlertas({ alertas = [] }) {
                 </span>
             </div>
 
-            {!possuiAlertas ? (
+            {alertas.length === 0 ? (
                 <p>
-                    Umidade dentro da faixa configurada.
+                    Nenhum evento ou alerta registrado.
                 </p>
             ) : (
                 <ul className="lista-alertas">
-                    {alertas.map((alerta, indice) => (
-                        <li
-                            key={`${alerta.mensagem}-${indice}`}
-                            className="item-alerta"
-                        >
-                            <strong>
-                                {formatarHorario(alerta.horario)}
-                            </strong>
+                    {alertas.map(
+                        (alerta, indice) => (
+                            <li
+                                key={`${alerta.mensagem}-${indice}`}
+                                className={`item-alerta alerta-${
+                                    alerta.tipo ||
+                                    "aviso"
+                                }`}
+                            >
+                                <strong>
+                                    {formatarHorario(
+                                        alerta.horario
+                                    )}
+                                </strong>
 
-                            <br />
+                                <br />
 
-                            {alerta.mensagem}
-                        </li>
-                    ))}
+                                {alerta.mensagem}
+                            </li>
+                        )
+                    )}
                 </ul>
             )}
         </section>
