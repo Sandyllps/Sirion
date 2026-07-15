@@ -69,6 +69,16 @@ function EditarZona({ aberto, modo, zona, idUsuario, aoFechar, aoAtualizar }) {
     }
 
     function gerarNovaChave() {
+        if (modo === "editar") {
+            const confirmou = window.confirm(
+                "Ao gerar uma nova chave, o firmware precisará usar exatamente essa nova chave. Deseja continuar?"
+            );
+
+            if (!confirmou) {
+                return;
+            }
+        }
+
         setChaveZona(crypto.randomUUID());
     }
 
@@ -86,13 +96,23 @@ function EditarZona({ aberto, modo, zona, idUsuario, aoFechar, aoAtualizar }) {
     }
 
     async function salvarZona() {
+        if (!chaveZona.trim()) {
+            alert("A chave ESP é obrigatória.");
+            return;
+        }
+
         const dadosZona = {
-            nome: nomeZona,
+            nome: nomeZona.trim(),
             min_umidade: Number(umidadeMinima),
             max_umidade: Number(umidadeMaxima),
+
             esp32: {
+                chave_esp: chaveZona.trim(),
+
                 pino_sensor_vazao: pinoSensorVazao,
+
                 pino_bomba: pinoBomba,
+
                 sensores_umidade: sensores.map((sensor) => ({
                     pino: sensor.pino
                 }))
@@ -104,7 +124,6 @@ function EditarZona({ aberto, modo, zona, idUsuario, aoFechar, aoAtualizar }) {
 
             if (modo === "nova") {
                 dadosZona.id_usuario = idUsuario;
-                dadosZona.esp32.chave_esp = chaveZona;
 
                 respostaApi = await criarZona(dadosZona);
             }
@@ -113,14 +132,23 @@ function EditarZona({ aberto, modo, zona, idUsuario, aoFechar, aoAtualizar }) {
                 const idZona = zona?._id || zona?.id;
 
                 if (!idZona) {
-                    alert("Não foi possível editar: ID da zona não encontrado.");
+                    alert(
+                        "Não foi possível editar: ID da zona não encontrado."
+                    );
                     return;
                 }
 
-                respostaApi = await editarZona(idZona, idUsuario, dadosZona);
+                respostaApi = await editarZona(
+                    idZona,
+                    idUsuario,
+                    dadosZona
+                );
             }
 
-            console.log("Zona salva com sucesso:", respostaApi);
+            console.log(
+                "Zona salva com sucesso:",
+                respostaApi
+            );
 
             if (aoAtualizar) {
                 await aoAtualizar();
@@ -129,8 +157,15 @@ function EditarZona({ aberto, modo, zona, idUsuario, aoFechar, aoAtualizar }) {
             aoFechar();
 
         } catch (erro) {
-            console.error("Erro ao salvar zona:", erro);
-            alert("Não foi possível salvar a zona. Veja o console.");
+            console.error(
+                "Erro ao salvar zona:",
+                erro
+            );
+
+            alert(
+                erro.message ||
+                "Não foi possível salvar a zona."
+            );
         }
     }
 

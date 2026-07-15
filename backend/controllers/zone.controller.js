@@ -73,31 +73,78 @@ async function getZone(req, res){ //esse getZone vai retornar tanto todas as zon
 
 
 //Função de editar zonas
-async function editZone(req, res){
-    try{
-        //pegando o id da zona que vem na url
-        const {id} = req.params;
+async function editZone(req, res) {
+    try {
+        const { id } = req.params;
 
-        //os dados novos vêm no corpo da requisição
-        const dadosAtualizados = req.body;
+        const dadosAtualizados = {
+            ...req.body
+        };
 
-        const zonaAtualizada = await Zone.findByIdAndUpdate(
-            id,
-            dadosAtualizados,
-            {new: true} //Garante que o retorno seja o objeto já com os novos dados
-        );
+        /*
+         * Não atualizamos o objeto esp32 inteiro.
+         * Transformamos cada propriedade em um campo separado:
+         *
+         * esp32.pino_bomba
+         * esp32.chave_esp
+         * esp32.sensores_umidade
+         *
+         * Assim, um campo que não veio na requisição
+         * não será apagado do banco.
+         */
+        if (dadosAtualizados.esp32) {
+            const dadosEsp32 =
+                dadosAtualizados.esp32;
 
-        if(!zonaAtualizada){
-            return res.status(404).json({erro: 'Zona de irirgação não encontrada.'});
+            delete dadosAtualizados.esp32;
+
+            Object.entries(dadosEsp32).forEach(
+                ([campo, valor]) => {
+                    if (valor !== undefined) {
+                        dadosAtualizados[
+                            `esp32.${campo}`
+                        ] = valor;
+                    }
+                }
+            );
+        }
+
+        const zonaAtualizada =
+            await Zone.findByIdAndUpdate(
+                id,
+                {
+                    $set: dadosAtualizados
+                },
+                {
+                    new: true,
+                    runValidators: true
+                }
+            );
+
+        if (!zonaAtualizada) {
+            return res.status(404).json({
+                erro:
+                    "Zona de irrigação não encontrada."
+            });
         }
 
         return res.status(200).json({
-            mensagem: 'Zona atualizada com sucesso!',
+            mensagem:
+                "Zona atualizada com sucesso!",
+
             dados: zonaAtualizada
         });
-    }   catch(erro){
-        console.error('Erro ao editar zona: ', erro);
-        return res.status(500).json({erro: 'Falha ao editar a zona de irrigação.'});
+
+    } catch (erro) {
+        console.error(
+            "Erro ao editar zona:",
+            erro
+        );
+
+        return res.status(500).json({
+            erro:
+                "Falha ao editar a zona de irrigação."
+        });
     }
 }
 
