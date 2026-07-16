@@ -3,8 +3,8 @@
     justify-content:space-between;
     align-items:center;
     width:100%;
-    height:70px;
-    padding:0 22px;
+    height:100px;
+    padding:0 20px;
     border-bottom:1px solid var(--border-subtle);
     background:var(--bg-header);
     box-sizing:border-box;
@@ -12,12 +12,12 @@
 }
 
 .botao-menu{
-    width:42px;
-    height:42px;
+    width:50px;
+    height:50px;
     border:1px solid var(--border-subtle);
     background:var(--bg-card);
     color:var(--texto-principal);
-    font-size:20px;
+    font-size:30px;
     border-radius:var(--raio-sm);
     display:flex;
     align-items:center;
@@ -35,20 +35,20 @@
     display:flex;
     flex-direction:column;
     flex:1;
-    margin-left:18px;
-    line-height:1.2;
+    margin-left:22px;
+    line-height:1.25;
 }
 
 .titulo-sistema h1{
     margin:0;
-    font-size:22px;
+    font-size:27px;
     font-weight:700;
     color:var(--texto-principal);
     letter-spacing:.3px;
 }
 
 .titulo-sistema span{
-    font-size:12px;
+    font-size:14px;
     color:var(--texto-secundario);
 }
 
@@ -56,7 +56,7 @@
 
     margin-left:auto;
 
-    font-size:14px;
+    font-size:15px;
 
     font-weight:600;
 
@@ -66,7 +66,7 @@
 
     border:1px solid var(--border-subtle);
 
-    padding:9px 16px;
+    padding:11px 19px;
 
     border-radius:999px;
 
@@ -76,13 +76,13 @@
 
     display:flex;
     align-items:center;
-    gap:8px;
+    gap:10px;
 }
 
 .perfil::before{
     content:"";
-    width:8px;
-    height:8px;
+    width:10px;
+    height:10px;
     border-radius:50%;
     background:var(--accent-verde);
     box-shadow:0 0 6px var(--accent-verde);

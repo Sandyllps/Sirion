@@ -58,7 +58,7 @@
 
 .sidebar{
 
-    width:220px;
+    width:250px;
     flex-shrink:0;
     transition:width .25s ease, opacity .2s ease;
 
@@ -85,7 +85,7 @@
 
     overflow:auto;
 
-    padding:20px 24px;
+    padding:28px 32px;
 
     transition:.25s;
 
@@ -111,12 +111,12 @@
 
     .sidebar{
 
-        width:190px;
+        width:210px;
 
     }
 
     .dashboard-container{
-        padding:16px;
+        padding:20px;
     }
 
 }
