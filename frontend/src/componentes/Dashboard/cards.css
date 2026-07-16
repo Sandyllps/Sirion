@@ -35,7 +35,6 @@
 
 /*cabeçalho do card*/
 .cartao-cabecalho{
-
     display:flex;
     align-items:center;
     gap:10px;
@@ -321,7 +320,7 @@
 }
 
 .item-alerta{
-    font-size:13px;
+    font-size:22px;
     color:var(--texto-secundario);
     background:var(--bg-input);
     border-left:3px solid var(--accent-ambar);
