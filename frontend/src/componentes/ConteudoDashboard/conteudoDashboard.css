@@ -1,71 +1,46 @@
 .painel-dashboard{
-
     width:100%;
     height:100%;
-
     display:flex;
-
     flex-direction:column;
 }
 
-
 /* Cabeçalho */
-
 .cabecalho-dashboard{
-
     display:flex;
-
     justify-content:space-between;
-
     align-items:center;
-
     margin-bottom:24px;
 }
 
 .titulo-zona{
-
     font-size:35px;
-
     font-weight:950;
-
     color:var(--texto-principal);
-
     margin-bottom: 20px;;
 }
 
 .botao-editar{
-
     height:42px;
     padding:0 22px;
     margin-bottom: 40px;
-
     border:1px solid var(--border-forte);
-
     background:var(--bg-card);
-
     color:var(--texto-principal);
-
     border-radius:var(--raio-sm);
 
     font-weight:600;
     font-size:14px;
-
-    cursor:pointer;
-
-    transition:.2s;
 }
 
 .botao-editar:hover{
-
     background:var(--accent-azul);
     border-color:var(--accent-azul);
     color:#fff;
-
 }
 
 
-/*Estado vazio/sem zona selecionada*/
-
+/*sem zona selecionada*/
 .painel-dashboard-vazio{
     flex:1;
     display:flex;
@@ -79,11 +54,8 @@
 
 
 /*primeira linha*/
-
 .linha-superior{
-
     display:grid;
-
     grid-template-columns:
         1fr
         1fr
@@ -91,17 +63,14 @@
         1.55fr;
 
     gap:18px;
-
     margin-bottom:18px;
     
 }
 
 
 /*faz cada componente preencher sua área*/
-
 .linha-superior>*,
 .linha-inferior>*{
-
     width:100%;
 }
 
@@ -113,15 +82,10 @@
 }
 
 .coluna-direita{
-
     display:grid;
-
     grid-template-rows:1fr;
-
     gap:18px;
-
     height:100%;
-
 }
 
 .historico,
@@ -132,7 +96,7 @@
 
 .painel-alertas .cartao-dashboard{
     height:100%;
-    justify-content:flex-start; /*torna as caixinhas de alerta ajustaveis a div pai*/
+    justify-content:flex-start; 
 }
 
 .painel-alertas .lista-alertas{
@@ -141,38 +105,27 @@
 }
 
 /* gráfico */
-
 .grafico-umidade{
-
     height:100%;
 }
 
 
 /* responsividade */
-
 @media(max-width:1100px){
-
     .linha-superior{
-
         grid-template-columns:repeat(2,1fr);
-
     }
 
     .linha-inferior{
-
         grid-template-columns:1fr;
-
     }
 
 }
 
 
 @media(max-width:700px){
-
     .linha-superior{
-
         grid-template-columns:1fr;
-
     }
 
 }

@@ -1,10 +1,6 @@
 import "./botoesLaterais.css";
 
-function BotoesLaterais({
-    tela,
-    aoAbrirCadastro,
-    aoAbrirLogin
-}) {
+function BotoesLaterais({tela, aoAbrirCadastro, aoAbrirLogin}) {
     return (
         <div
             className={`botoes-laterais ${tela}`}
