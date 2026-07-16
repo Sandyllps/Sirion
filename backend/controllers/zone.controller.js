@@ -43,7 +43,7 @@ async function createZone(req, res) {
 }
 
 
-//Função de listar zonas de irigação
+//Função de listar zonas de irrigação
 async function getZone(req, res){ //esse getZone vai retornar tanto todas as zonas do usuario quanto uma zona específica dependendo do parâmetro query enviado na requisição. 
     try{
         //além de mandar parametros no body, também podemos mandar paarâmetros query, onde, você manda parâmetros na url, no final da rota
