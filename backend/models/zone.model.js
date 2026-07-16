@@ -1,3 +1,6 @@
+//O arquivo zone.model.js serve para definir o formato de uma zona de irrigação no MongoDB.
+//Ele determina quais informações uma zona deve possuir
+
 import mongoose from "mongoose";
 
 const zoneSchema = new mongoose.Schema({

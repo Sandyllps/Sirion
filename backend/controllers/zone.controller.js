@@ -1,3 +1,4 @@
+//O zone.controller.js serve para gerenciar as zonas de irrigação.
 import Zone from "../models/zone.model.js";
 import {
     solicitarRecarregamentoConfiguracoes,

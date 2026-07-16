@@ -1,3 +1,6 @@
+
+//O arquivo mysql.js serve para criar a conexão da API com o banco MySQL.
+
 import 'dotenv/config'
 import mysql from'mysql2/promise';
 

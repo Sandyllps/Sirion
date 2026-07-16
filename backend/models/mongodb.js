@@ -1,3 +1,5 @@
+//O arquivo mongodb.js serve para conectar a API ao MongoDB.
+
 import mongoose from "mongoose";
 
 async function conectarMongoDB(){

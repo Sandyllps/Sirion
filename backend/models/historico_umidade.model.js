@@ -1,3 +1,5 @@
+//O arquivo historico_umidade.model.js serve para definir como cada leitura de umidade será armazenada no MongoDB.
+
 import mongoose from "mongoose";
 
 const historicoUmidadeSchema = new mongoose.Schema({

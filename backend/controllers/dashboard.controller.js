@@ -1,3 +1,4 @@
+//dashboard.controller foi criado para reunir e preparar todas as informações que a tela principal precisa mostrar.
 import Zone from "../models/zone.model.js";
 import HistoricoUmidade from "../models/historico_umidade.model.js";
 

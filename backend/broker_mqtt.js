@@ -1,3 +1,6 @@
+//O arquivo broker_mqtt.js serve para criar e controlar o broker MQTT, responsável pela troca de mensagens entre o backend e o ESP32.
+//Ele funciona como um intermediário:
+
 import { Aedes } from 'aedes';
 import net from 'net';
 import Zone from './models/zone.model.js';
