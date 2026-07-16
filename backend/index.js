@@ -29,7 +29,7 @@ conectarMongoDB();
 //Aquio servidor começa de fato a ouvir as chamadas que a página faz na porta definida
 const server = app.listen(port, function(){
     console.log("Servidor Sirion rodando com sucesso!");
-    console.log("Escutando em: http://localhost:"+ port);
+    console.log(`🌐 API HTTP rodando em http://localhost:${port} (Frontend ↔ Backend)`);
     iniciarBrokerMQTT();
 })
 

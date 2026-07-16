@@ -63,7 +63,7 @@ function Dashboard({ aoSair }) {
 
         carregarDadosZona();
 
-        const intervalo = setInterval(
+        const intervalo = setInterval( //Aqui o react consulta a API a cada 5 segundos
             carregarDadosZona,
             5000
         );

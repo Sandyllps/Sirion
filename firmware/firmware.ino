@@ -422,7 +422,7 @@ void loop() {
       Serial.print("Publicando leitura do sensor: ");
       Serial.println(payload);
 
-      bool publicacaoRealizada = client.publish(
+      bool publicacaoRealizada = client.publish( //publicando a leitura de umidade a cada 5 segundos
         "sirion/jardim/umidade",
         payload.c_str()
       );
