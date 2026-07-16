@@ -352,11 +352,11 @@
 
 
 .modo-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 12px;
-    margin-top: 10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin:auto 0;
 }
 
 .modo-informacoes {
