@@ -8,6 +8,7 @@
 const int mqtt_port = 1883; // A porta TCP que configuramos no backend
 
 int bombaLigada = 0;
+bool modoAutomatico = true;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -84,6 +85,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   //aqui colocarei depois a lógica para acender LED, ligar relé etc
   if(strcmp(topic, "sirion/jardim/switch") == 0){
+    if (modoAutomatico) {
+      Serial.println(
+        "Comando manual ignorado: o sistema está no modo automático."
+      );
+      return;
+    }
+
     if (!pinoPodeSerOutput(pinoBombaInt)) {
       Serial.println("Erro: pino da bomba ainda não foi configurado corretamente.");
       return;
@@ -285,33 +293,43 @@ void loop() {
       //   Serial.println("Pulsos insuficientes para considerar fluxo real de água.");
       // }
 
-      //aqui estamos usando a média de umidade para saber se precisamos ligar/desligar a bomba
-      if (pinoPodeSerOutput(pinoBombaInt)) {
-        if (mediaUmidade < umidadeMinimaConfigurada) {
-          if (bombaLigada == 0) {
-            digitalWrite(pinoBombaInt, HIGH);
-            bombaLigada = 1;
+      if (modoAutomatico) {
+        //aqui estamos usando a média de umidade para saber se precisamos ligar/desligar a bomba
+        if (pinoPodeSerOutput(pinoBombaInt)) {
 
-            Serial.println(
-              "Bomba ligada automaticamente por baixa umidade."
-            );
-          }
-        } else if (
-          mediaUmidade >= umidadeMaximaConfigurada
-        ) {
-          if (bombaLigada == 1) {
-            digitalWrite(pinoBombaInt, LOW);
-            bombaLigada = 0;
+          if(mediaUmidade < umidadeMinimaConfigurada){
 
-            Serial.println(
-              "Bomba desligada automaticamente por umidade suficiente."
-            );
+            if (bombaLigada == 0) {
+
+              digitalWrite(pinoBombaInt, HIGH);
+              bombaLigada = 1;
+
+              Serial.println(
+                "Bomba ligada automaticamente por baixa umidade."
+              );
+            }
+
+          } else if(
+            mediaUmidade >= umidadeMaximaConfigurada
+          ){
+
+            if (bombaLigada == 1) {
+
+              digitalWrite(pinoBombaInt, LOW);
+              bombaLigada = 0;
+
+              Serial.println(
+                "Bomba desligada automaticamente por umidade suficiente."
+              );
+            }
           }
+
+        } else {
+
+          Serial.println(
+            "Erro: pino da bomba inválido para controle automático."
+          );
         }
-      } else {
-        Serial.println(
-          "Erro: pino da bomba inválido para controle automático."
-        );
       }
 
       /*
@@ -417,6 +435,12 @@ void fazerRequisicaoGET() {
       const char* nome = doc[0]["nome"];
       umidadeMinimaConfigurada = doc[0]["min_umidade"];
       umidadeMaximaConfigurada = doc[0]["max_umidade"];
+      const char* modo_irrigacao =
+        doc[0]["modo_irrigacao"] | "automatico";
+
+      modoAutomatico =
+        String(modo_irrigacao) != "manual";
+
       const char* pino_sensor_vazao = doc[0]["esp32"]["pino_sensor_vazao"];
       const char* pino_bomba = doc[0]["esp32"]["pino_bomba"];
       JsonArray sensores_umidade = doc[0]["esp32"]["sensores_umidade"];
@@ -427,6 +451,12 @@ void fazerRequisicaoGET() {
       Serial.print("nome: "); Serial.println(nome);
       Serial.print("Umidade mínima: "); Serial.println(umidadeMinimaConfigurada);
       Serial.print("Umidade máxima: "); Serial.println(umidadeMaximaConfigurada);
+      Serial.print("Modo de irrigação: ");
+      Serial.println(
+        modoAutomatico
+          ? "Automatico"
+          : "Manual"
+      );
       Serial.print("Pino do sensor de vazão: "); Serial.println(pino_sensor_vazao);
       Serial.print("Pino da bomba: "); Serial.println(pino_bomba);
       Serial.println("Pinos dos sensores de umidade: ");
