@@ -77,6 +77,12 @@ async function getDashboard(req, res) {
                     : "desconectado";
         }
 
+        const estadoBombaAtual =
+            statusConexao === "conectado" &&
+            typeof zona.bomba_ativa === "boolean"
+                ? zona.bomba_ativa
+                : null;
+
         const alertas = [];
 
         if (!ultimaLeitura) {
@@ -156,7 +162,7 @@ async function getDashboard(req, res) {
             );
         }
 
-        if (zona.bomba_ativa === true) {
+        if (estadoBombaAtual === true) {
             alertas.unshift(
                 criarAlerta(
                     "informacao",
@@ -178,10 +184,10 @@ async function getDashboard(req, res) {
                 );
 
             if (
-                zona.bomba_ativa !== true &&
-                minutosDesdeIrrigacao >= 0 &&
-                minutosDesdeIrrigacao <= 10
-            ) {
+                    estadoBombaAtual === false &&
+                    minutosDesdeIrrigacao >= 0 &&
+                    minutosDesdeIrrigacao <= 10
+                ) {
                 alertas.push(
                     criarAlerta(
                         "sucesso",
@@ -208,10 +214,7 @@ async function getDashboard(req, res) {
             status_conexao:
                 statusConexao,
 
-            bomba_ativa:
-                typeof zona.bomba_ativa === "boolean"
-                    ? zona.bomba_ativa
-                    : null,
+            bomba_ativa: estadoBombaAtual,
 
             ultima_irrigacao:
                 zona.ultima_irrigacao || null,
