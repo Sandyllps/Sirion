@@ -9,6 +9,7 @@ const int mqtt_port = 1883; // A porta TCP que configuramos no backend
 
 int bombaLigada = 0;
 bool modoAutomatico = true;
+bool bombaInicializada = false;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -581,11 +582,32 @@ void fazerRequisicaoGET() {
 
       if (pinoPodeSerOutput(pinoBombaInt)) {
         pinMode(pinoBombaInt, OUTPUT);
-        digitalWrite(pinoBombaInt, LOW);
-        bombaLigada = 0;
-        Serial.println("Pino da bomba inicializado como OUTPUT.");
+
+        if (!bombaInicializada) {
+          digitalWrite(pinoBombaInt, LOW);
+          bombaLigada = 0;
+          bombaInicializada = true;
+
+          Serial.println(
+            "Pino da bomba inicializado como OUTPUT."
+          );
+        } else {
+          digitalWrite(
+            pinoBombaInt,
+            bombaLigada == 1
+              ? HIGH
+              : LOW
+          );
+
+          Serial.println(
+            "Configuracoes recarregadas sem alterar o estado da bomba."
+          );
+        }
+
       } else {
-        Serial.println("Erro: o pino da bomba não pode ser usado como OUTPUT.");
+        Serial.println(
+          "Erro: o pino da bomba não pode ser usado como OUTPUT."
+        );
       }
 
       for (int i = 0; i < quantidadeSensoresUmidade; i++) {
