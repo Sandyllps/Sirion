@@ -1,4 +1,7 @@
 import Zone from "../models/zone.model.js";
+import {
+    solicitarRecarregamentoConfiguracoes
+} from "../broker_mqtt.js";
 
 //Funcão de criar zonas de irrigação
 async function createZone(req, res) {
@@ -126,6 +129,15 @@ async function editZone(req, res) {
                 erro:
                     "Zona de irrigação não encontrada."
             });
+        }
+
+        if (
+            Object.prototype.hasOwnProperty.call(
+                req.body,
+                "modo_irrigacao"
+            )
+        ) {
+            solicitarRecarregamentoConfiguracoes();
         }
 
         return res.status(200).json({

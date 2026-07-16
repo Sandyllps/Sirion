@@ -111,4 +111,33 @@ function iniciarBrokerMQTT(){
     });
 }
 
-export {iniciarBrokerMQTT}
+function solicitarRecarregamentoConfiguracoes() {
+    broker.publish(
+        {
+            cmd: "publish",
+            qos: 0,
+            topic: "sirion/jardim/recarregar",
+            payload: Buffer.from("recarregar"),
+            retain: false
+        },
+        (erro) => {
+            if (erro) {
+                console.error(
+                    "[MQTT] Erro ao solicitar recarregamento:",
+                    erro
+                );
+
+                return;
+            }
+
+            console.log(
+                "[MQTT] Recarregamento das configurações solicitado."
+            );
+        }
+    );
+}
+
+export {
+    iniciarBrokerMQTT,
+    solicitarRecarregamentoConfiguracoes
+};
