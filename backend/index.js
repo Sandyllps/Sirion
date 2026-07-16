@@ -1,6 +1,6 @@
 import express from "express"; //express é um framework que simplifica o tratamento de requisições, rotas, e facilita a troca de info. entre a página e o servidor
 import cors from "cors";
-import 'dotenv/config'; //esse import carrega as vaariáveis do arquivo .env (nesse arquivo estão os dados do banco de dados).
+import 'dotenv/config'; //esse import carrega as vaariáveis do arquivo .env (nesse arquivo estão os dados do banco de dados Mysql).
 import { authRouter } from "./routes/auth.route.js";
 import { conectarMongoDB } from "./models/mongodb.js";
 import { zoneRouter } from "./routes/zone.route.js";

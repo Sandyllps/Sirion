@@ -270,3 +270,4 @@ export {createZone};
 export {getZone};
 export {editZone};
 export {deleteZone};
+export {controlarBombaManual};

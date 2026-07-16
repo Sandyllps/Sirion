@@ -3,10 +3,10 @@ import mysql from'mysql2/promise';
 
 //Criando a conexão usando as credenciais do banco relacional
 const mysqlPool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: 'CalangoAceso',
-    database: 'sirion_relacional',
+    host: process.env.MYSQL_HOST,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE,
     waitForConnections: true,
     connectionLimit: 10
 });
