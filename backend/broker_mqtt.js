@@ -137,7 +137,47 @@ function solicitarRecarregamentoConfiguracoes() {
     );
 }
 
+function enviarComandoBombaManual(
+    chaveESP,
+    acao
+) {
+    return new Promise((resolve, reject) => {
+        const payload = JSON.stringify({
+            chave_esp: chaveESP,
+            acao
+        });
+
+        broker.publish(
+            {
+                cmd: "publish",
+                qos: 0,
+                topic: "sirion/jardim/switch",
+                payload: Buffer.from(payload),
+                retain: false
+            },
+            (erro) => {
+                if (erro) {
+                    console.error(
+                        "[MQTT] Erro ao enviar comando manual da bomba:",
+                        erro
+                    );
+
+                    reject(erro);
+                    return;
+                }
+
+                console.log(
+                    `[MQTT] Comando manual enviado: ${acao} | ESP: ${chaveESP}`
+                );
+
+                resolve();
+            }
+        );
+    });
+}
+
 export {
     iniciarBrokerMQTT,
-    solicitarRecarregamentoConfiguracoes
+    solicitarRecarregamentoConfiguracoes,
+    enviarComandoBombaManual
 };

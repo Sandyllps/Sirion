@@ -9,6 +9,7 @@ const int mqtt_port = 1883; // A porta TCP que configuramos no backend
 
 int bombaLigada = 0;
 bool modoAutomatico = true;
+bool bombaInicializada = false;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -93,21 +94,80 @@ void callback(char* topic, byte* payload, unsigned int length) {
     }
 
     if (!pinoPodeSerOutput(pinoBombaInt)) {
-      Serial.println("Erro: pino da bomba ainda não foi configurado corretamente.");
+      Serial.println(
+        "Erro: pino da bomba ainda não foi configurado corretamente."
+      );
       return;
     }
 
-    if(bombaLigada == 0){
-      digitalWrite(pinoBombaInt, HIGH);
-      bombaLigada = 1;
-      Serial.print("Bomba/Led ligada no pino ");
-      Serial.println(pinoBombaInt);
-    }else{
-      digitalWrite(pinoBombaInt,LOW);
-      bombaLigada = 0;
-      Serial.print("Bomba/Led desligada no pino ");
-      Serial.println(pinoBombaInt);
+    JsonDocument comandoBomba;
+
+    DeserializationError erroComando =
+      deserializeJson(comandoBomba, mensagem);
+
+    if (erroComando) {
+      Serial.print(
+        "Erro ao interpretar o comando manual da bomba: "
+      );
+      Serial.println(erroComando.c_str());
+      return;
     }
+
+    const char* chaveComando =
+      comandoBomba["chave_esp"] | "";
+
+    const char* acaoComando =
+      comandoBomba["acao"] | "";
+
+    if (
+      String(chaveComando) !=
+      String(chave_esp)
+    ) {
+      Serial.println(
+        "Comando ignorado: pertence a outro ESP32."
+      );
+      return;
+    }
+
+    if (strcmp(acaoComando, "ligar") == 0) {
+      if (bombaLigada == 0) {
+        digitalWrite(pinoBombaInt, HIGH);
+        bombaLigada = 1;
+
+        Serial.print(
+          "Bomba ligada manualmente no pino "
+        );
+        Serial.println(pinoBombaInt);
+      } else {
+        Serial.println(
+          "A bomba já estava ligada."
+        );
+      }
+
+      return;
+    }
+
+    if (strcmp(acaoComando, "desligar") == 0) {
+      if (bombaLigada == 1) {
+        digitalWrite(pinoBombaInt, LOW);
+        bombaLigada = 0;
+
+        Serial.print(
+          "Bomba desligada manualmente no pino "
+        );
+        Serial.println(pinoBombaInt);
+      } else {
+        Serial.println(
+          "A bomba já estava desligada."
+        );
+      }
+
+      return;
+    }
+
+    Serial.println(
+      "Comando manual inválido. Use ligar ou desligar."
+    );
   }
 
   if(strcmp(topic, "sirion/jardim/recarregar") == 0){
@@ -522,11 +582,32 @@ void fazerRequisicaoGET() {
 
       if (pinoPodeSerOutput(pinoBombaInt)) {
         pinMode(pinoBombaInt, OUTPUT);
-        digitalWrite(pinoBombaInt, LOW);
-        bombaLigada = 0;
-        Serial.println("Pino da bomba inicializado como OUTPUT.");
+
+        if (!bombaInicializada) {
+          digitalWrite(pinoBombaInt, LOW);
+          bombaLigada = 0;
+          bombaInicializada = true;
+
+          Serial.println(
+            "Pino da bomba inicializado como OUTPUT."
+          );
+        } else {
+          digitalWrite(
+            pinoBombaInt,
+            bombaLigada == 1
+              ? HIGH
+              : LOW
+          );
+
+          Serial.println(
+            "Configuracoes recarregadas sem alterar o estado da bomba."
+          );
+        }
+
       } else {
-        Serial.println("Erro: o pino da bomba não pode ser usado como OUTPUT.");
+        Serial.println(
+          "Erro: o pino da bomba não pode ser usado como OUTPUT."
+        );
       }
 
       for (int i = 0; i < quantidadeSensoresUmidade; i++) {

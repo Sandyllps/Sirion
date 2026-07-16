@@ -131,6 +131,9 @@ function PainelLateral({
                     modoIrrigacao={
                         dadosZona?.modo_irrigacao
                     }
+                    bombaLigada={
+                        dadosZona?.bomba_ativa
+                    }
                     aoAtualizar={aoAtualizar}
                 />
             </section>
