@@ -1,72 +1,45 @@
 .grafico-umidade{
-
     width:100%;
-
     height:100%;
-
     background:var(--bg-card);
-
     border:1px solid var(--border-subtle);
-
     border-radius:var(--raio);
-
     padding:22px;
-
     display:flex;
-
     flex-direction:column;
-
     box-sizing:border-box;
-
     box-shadow:var(--sombra-card);
-
 }
 
 .grafico-umidade h3{
-
     margin:0 0 18px;
-
     font-size:14px;
     letter-spacing:.05em;
     text-transform:uppercase;
-
     color:var(--texto-secundario);
-
     font-weight:700;
-
 }
 
 .grafico-umidade .recharts-responsive-container{
-
     flex:1;
-
 }
 
 .recharts-cartesian-grid line{
-
     stroke:var(--border-subtle);
-
 }
 
 .recharts-x-axis line,
 .recharts-y-axis line{
-
     stroke:var(--border-forte);
-
 }
 
 .recharts-cartesian-axis-tick-value{
-
     fill:var(--texto-fraco);
-
     font-size:12px;
-
 }
 
 .recharts-tooltip-wrapper{
-
     outline:none;
-
 }
 
 .recharts-default-tooltip{
@@ -88,19 +61,14 @@
 
 .tooltip-umidade {
     min-width: 180px;
-
     display: flex;
     flex-direction: column;
     gap: 8px;
-
     padding: 12px 14px;
-
     border: 1px solid var(--border-forte);
     border-radius: 8px;
-
     background: var(--bg-input);
     color: var(--texto-principal);
-
     box-shadow: var(--sombra-card);
 }
 

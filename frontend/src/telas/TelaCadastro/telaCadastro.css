@@ -2,9 +2,7 @@
     width: 100%;
     min-height: 100svh;
     overflow: hidden;
-
     background: #217b71;
-
     animation: fadeInAutenticacao 350ms ease-out both;
 }
 
@@ -21,7 +19,6 @@
 .container-cadastro {
     width: 100%;
     min-height: 100svh;
-
     display: flex;
 }
 
@@ -37,10 +34,8 @@
 
 .imagem-lateral-cadastro {
     position: relative;
-
     flex: 1 1 50%;
     min-height: 100svh;
-
     overflow: hidden;
 }
 
@@ -52,12 +47,9 @@
 .imagem-lateral-cadastro .carrossel .imagem {
     position: absolute;
     inset: 0;
-
     width: 100%;
     height: 100%;
-
     object-fit: cover;
-
     opacity: 0;
     transition: opacity 1s ease;
 }
@@ -105,12 +97,9 @@
 /* Ajustes finais de estrutura e centralização */
 .pagina-cadastro {
     min-height: 100svh;
-
     overflow-x: hidden;
     overflow-y: auto;
-
     background: #0b1628;
-
     animation:
         fadeInAutenticacao
         720ms
@@ -130,16 +119,12 @@
 
 .painel-cadastro {
     position: relative;
-
     min-width: 0;
     min-height: 100svh;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     padding: 48px 0;
-
     overflow: visible;
 
     background:
@@ -155,7 +140,6 @@
         calc(100% - 96px),
         560px
     );
-
     margin: 0 auto;
     padding: 0;
 }
@@ -165,17 +149,14 @@
 
     min-width: 0;
     min-height: 100svh;
-
     overflow: hidden;
 }
 
 .imagem-lateral-cadastro::after {
     content: "";
-
     position: absolute;
     inset: 0;
     z-index: 2;
-
     pointer-events: none;
 
     background:

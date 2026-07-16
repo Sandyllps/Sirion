@@ -1,30 +1,17 @@
 /*card base de estilo: os cards de umidade, da boma, etc seguirão esse padrão de estilos*/
 .cartao-dashboard{
-
     width:100%;
-
     min-height:138px;
-
     background:var(--bg-card);
-
     border:1px solid var(--border-subtle);
-
     border-radius:var(--raio);
-
     padding:19px 21px;
-
     box-sizing:border-box;
-
     display:flex;
-
     flex-direction:column;
-
     justify-content:space-between;
-
     box-shadow:var(--sombra-card);
-
     border-top:3px solid var(--accent-azul);
-
     transition:transform .2s, border-color .2s;
 }
 
@@ -52,108 +39,66 @@
 
 /*título*/
 .cartao-dashboard h3{
-
     margin:0;
-
     font-size:13px;
-
     font-weight:600;
-
     letter-spacing:.05em;
     text-transform:uppercase;
-
     color:var(--texto-secundario);
-
     line-height:1;
-
 }
 
 
 /*valores*/
 .cartao-dashboard h1{
-
     margin:0;
-
     font-size:36px;
-
     font-weight:700;
-
     color:var(--texto-principal);
-
     line-height:1;
-
 }
 
 .cartao-dashboard h2{
-
     margin:0;
-
     font-size:27px;
-
     font-weight:700;
-
     color:var(--texto-principal);
-
     line-height:1;
-
 }
 
 
 /*texto*/
 .cartao-dashboard p{
-
     margin:0;
-
     font-size:14px;
-
     color:var(--texto-secundario);
-
 }
 
 
 .cartao-dashboard small{
-
     margin-top:2px;
-
     font-size:13px;
-
     color:var(--texto-fraco);
-
 }
 
 
 /*botão modo automatico/manual*/
 .botao-modo{
-
     margin-top:10px;
-
     align-self:flex-start;
-
     padding:8px 16px;
-
     background:transparent;
-
     border:1px solid var(--border-forte);
-
     color:var(--texto-principal);
-
     border-radius:999px;
-
     font-size:13px;
     font-weight:600;
-
-    cursor:pointer;
-
-    transition:.2s;
-
 }
 
 .botao-modo:hover{
-
     background:var(--accent-azul);
     border-color:var(--accent-azul);
     color:#fff;
-
 }
 
 
@@ -163,21 +108,15 @@
 }
 
 .card-verde{
-
     border-top-color:var(--accent-verde);
-
 }
 
 .card-ambar{
-
     border-top-color:var(--accent-ambar);
-
 }
 
 .card-vermelho{
-
     border-top-color:var(--accent-vermelho);
-
 }
 
 .card-roxo{
@@ -229,17 +168,12 @@
 
 /*responsividade*/
 @media(max-width:1200px){
-
     .cartao-dashboard h1{
-
         font-size:32px;
-
     }
 
     .cartao-dashboard h2{
-
         font-size:25px;
-
     }
 
 }
@@ -247,67 +181,41 @@
 @media(max-width:768px){
 
     .cartao-dashboard{
-
         min-height:118px;
-
         padding:16px;
-
     }
-
 }
 
 .modo-irrigacao{
-
     display:flex;
-
     justify-content:space-between;
-
     align-items:center;
-
     margin-top:12px;
-
 }
 
 .linha-umidade{
-
     display:flex;
-
     justify-content:space-between;
-
     align-items:center;
-
     gap:12px;
-
     margin-top: 30px;
-
 }
 
 .faixa-ideal{
-
     text-align:right;
-
 }
 
 .faixa-ideal span{
-
     display:block;
-
     font-size:12px;
-
     color:var(--texto-fraco);
-
 }
 
 .faixa-ideal strong{
-
     color:var(--texto-principal);
-
     font-size:17px;
-
 }
 
-
-/*loista de alertas*/
 
 .lista-alertas{
     list-style:none;
@@ -379,17 +287,11 @@
 
 .botao-bomba-manual {
     padding: 6px 14px;
-
     border: 1px solid transparent;
     border-radius: 999px;
-
     color: #fff;
-
     font-size: 11px;
     font-weight: 600;
-
-    cursor: pointer;
-
     transition:
         opacity .2s,
         transform .2s;

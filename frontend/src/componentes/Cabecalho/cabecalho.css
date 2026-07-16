@@ -53,27 +53,14 @@
 }
 
 .perfil{
-
     margin-left:auto;
-
     font-size:15px;
-
     font-weight:600;
-
     color:var(--texto-principal);
-
     background:var(--bg-card);
-
     border:1px solid var(--border-subtle);
-
     padding:11px 19px;
-
     border-radius:999px;
-
-    cursor:pointer;
-
-    transition:.2s;
-
     display:flex;
     align-items:center;
     gap:10px;

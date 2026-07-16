@@ -29,23 +29,15 @@
 .botoes-laterais button {
     width: 128px;
     min-height: 50px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     padding: 10px 16px;
-
     border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: 12px;
-
     color: #ffffff;
-
     font-size: 14px;
     font-weight: 600;
-
-    cursor: pointer;
-
     opacity: 0.72;
 
     transition:
@@ -76,7 +68,6 @@
  */
 .botoes-laterais button.ativo {
     opacity: 1;
-
     border-color: rgba(255, 255, 255, 0.48);
 }
 
@@ -90,14 +81,10 @@
     .botoes-laterais.login,
     .botoes-laterais.cadastro {
         position: static;
-
         width: min(calc(100% - 48px), 560px);
-
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-
         margin: 0 auto 28px;
-
         transform: none;
     }
 
