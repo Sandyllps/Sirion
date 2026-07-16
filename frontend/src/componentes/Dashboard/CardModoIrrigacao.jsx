@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { atualizarModoIrrigacao } from "../../api";
+
+import {
+    atualizarModoIrrigacao,
+    controlarBombaManual
+} from "../../api";
 
 import "./cards.css";
 
@@ -7,12 +11,16 @@ function CardModoIrrigacao({
     idZona,
     idUsuario,
     modoIrrigacao,
+    bombaLigada,
     aoAtualizar
 }) {
     const [modoAutomatico, setModoAutomatico] =
         useState(true);
 
-    const [carregando, setCarregando] =
+    const [carregandoModo, setCarregandoModo] =
+        useState(false);
+
+    const [carregandoBomba, setCarregandoBomba] =
         useState(false);
 
     useEffect(() => {
@@ -22,16 +30,22 @@ function CardModoIrrigacao({
     }, [modoIrrigacao, idZona]);
 
     async function alterarModo() {
-        if (!idZona || !idUsuario || carregando) {
+        if (
+            !idZona ||
+            !idUsuario ||
+            carregandoModo ||
+            carregandoBomba
+        ) {
             return;
         }
 
-        const novoModo = modoAutomatico
-            ? "manual"
-            : "automatico";
+        const novoModo =
+            modoAutomatico
+                ? "manual"
+                : "automatico";
 
         try {
-            setCarregando(true);
+            setCarregandoModo(true);
 
             await atualizarModoIrrigacao(
                 idZona,
@@ -53,11 +67,76 @@ function CardModoIrrigacao({
             );
 
             alert(
+                erro.message ||
                 "Não foi possível alterar o modo de irrigação."
             );
         } finally {
-            setCarregando(false);
+            setCarregandoModo(false);
         }
+    }
+
+    async function alterarEstadoBomba() {
+        if (
+            modoAutomatico ||
+            !idZona ||
+            !idUsuario ||
+            carregandoModo ||
+            carregandoBomba
+        ) {
+            return;
+        }
+
+        const acao =
+            bombaLigada === true
+                ? "desligar"
+                : "ligar";
+
+        try {
+            setCarregandoBomba(true);
+
+            await controlarBombaManual(
+                idZona,
+                idUsuario,
+                acao
+            );
+
+            /*
+             * O ESP32 publica seu estado a cada
+             * cinco segundos. Aguardamos a confirmação
+             * real do dispositivo antes de atualizar.
+             */
+            await new Promise((resolve) => {
+                setTimeout(resolve, 5500);
+            });
+
+            if (aoAtualizar) {
+                await aoAtualizar();
+            }
+        } catch (erro) {
+            console.error(
+                "Erro ao controlar a bomba:",
+                erro
+            );
+
+            alert(
+                erro.message ||
+                "Não foi possível controlar a bomba."
+            );
+        } finally {
+            setCarregandoBomba(false);
+        }
+    }
+
+    function obterEstadoBomba() {
+        if (bombaLigada === true) {
+            return "Bomba ligada";
+        }
+
+        if (bombaLigada === false) {
+            return "Bomba desligada";
+        }
+
+        return "Aguardando estado do ESP32";
     }
 
     return (
@@ -71,26 +150,61 @@ function CardModoIrrigacao({
             </div>
 
             <div className="modo-container">
-                <h2>
-                    {modoAutomatico
-                        ? "Automático"
-                        : "Manual"}
-                </h2>
+                <div className="modo-informacoes">
+                    <h2>
+                        {modoAutomatico
+                            ? "Automático"
+                            : "Manual"}
+                    </h2>
 
-                <button
-                    type="button"
-                    className="botao-modo"
-                    onClick={alterarModo}
-                    disabled={
-                        !idZona ||
-                        !idUsuario ||
-                        carregando
-                    }
-                >
-                    {carregando
-                        ? "Alterando..."
-                        : "Alterar modo"}
-                </button>
+                    {!modoAutomatico && (
+                        <small>
+                            {obterEstadoBomba()}
+                        </small>
+                    )}
+                </div>
+
+                <div className="acoes-modo">
+                    <button
+                        type="button"
+                        className="botao-modo"
+                        onClick={alterarModo}
+                        disabled={
+                            !idZona ||
+                            !idUsuario ||
+                            carregandoModo ||
+                            carregandoBomba
+                        }
+                    >
+                        {carregandoModo
+                            ? "Alterando..."
+                            : "Alterar modo"}
+                    </button>
+
+                    {!modoAutomatico && (
+                        <button
+                            type="button"
+                            className={`botao-bomba-manual ${
+                                bombaLigada === true
+                                    ? "desligar"
+                                    : "ligar"
+                            }`}
+                            onClick={alterarEstadoBomba}
+                            disabled={
+                                !idZona ||
+                                !idUsuario ||
+                                carregandoModo ||
+                                carregandoBomba
+                            }
+                        >
+                            {carregandoBomba
+                                ? "Aguardando ESP32..."
+                                : bombaLigada === true
+                                ? "Desligar bomba"
+                                : "Ligar bomba"}
+                        </button>
+                    )}
+                </div>
             </div>
         </section>
     );

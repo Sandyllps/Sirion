@@ -1,6 +1,7 @@
 import Zone from "../models/zone.model.js";
 import {
-    solicitarRecarregamentoConfiguracoes
+    solicitarRecarregamentoConfiguracoes,
+    enviarComandoBombaManual
 } from "../broker_mqtt.js";
 
 //Funcão de criar zonas de irrigação
@@ -156,6 +157,86 @@ async function editZone(req, res) {
         return res.status(500).json({
             erro:
                 "Falha ao editar a zona de irrigação."
+        });
+    }
+}
+
+
+async function controlarBombaManual(req, res) {
+    try {
+        const { id } = req.params;
+        const { id_usuario } = req.query;
+        const { acao } = req.body;
+
+        if (
+            acao !== "ligar" &&
+            acao !== "desligar"
+        ) {
+            return res.status(400).json({
+                erro:
+                    'A ação deve ser "ligar" ou "desligar".'
+            });
+        }
+
+        const zona = await Zone.findById(id);
+
+        if (!zona) {
+            return res.status(404).json({
+                erro:
+                    "Zona de irrigação não encontrada."
+            });
+        }
+
+        if (
+            id_usuario &&
+            String(zona.id_usuario) !==
+            String(id_usuario)
+        ) {
+            return res.status(403).json({
+                erro:
+                    "Esta zona não pertence ao usuário informado."
+            });
+        }
+
+        if (
+            zona.modo_irrigacao !== "manual"
+        ) {
+            return res.status(409).json({
+                erro:
+                    "A bomba só pode ser controlada diretamente no modo manual."
+            });
+        }
+
+        const chaveESP =
+            zona.esp32?.chave_esp;
+
+        if (!chaveESP) {
+            return res.status(400).json({
+                erro:
+                    "A zona não possui uma chave ESP32 válida."
+            });
+        }
+
+        await enviarComandoBombaManual(
+            chaveESP,
+            acao
+        );
+
+        return res.status(200).json({
+            mensagem:
+                `Comando para ${acao} a bomba enviado com sucesso.`,
+            acao
+        });
+
+    } catch (erro) {
+        console.error(
+            "Erro ao controlar a bomba manualmente:",
+            erro
+        );
+
+        return res.status(500).json({
+            erro:
+                "Não foi possível enviar o comando manual para a bomba."
         });
     }
 }

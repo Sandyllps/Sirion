@@ -162,6 +162,27 @@ export async function atualizarModoIrrigacao(
     );
 }
 
+export async function controlarBombaManual(
+    idZona,
+    idUsuario,
+    acao
+) {
+    const resposta = await fetch(
+        `${API_URL}/zone/${idZona}/bomba?id_usuario=${encodeURIComponent(idUsuario)}`,
+        {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                acao
+            })
+        }
+    );
+
+    return tratarResposta(resposta);
+}
+
 export async function registrarIrrigacaoManual(
     idZona,
     idUsuario
